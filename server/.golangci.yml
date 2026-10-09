@@ -1,0 +1,215 @@
+version: '2'
+
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    # Core correctness
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    # Code quality
+    - misspell
+    - unconvert
+    - gocritic
+    - exhaustive
+    - nilerr
+    - bodyclose
+    - prealloc
+    - revive
+    - forbidigo
+    # Function discipline
+    - funlen
+    - cyclop
+    - nestif
+    - gocognit
+    # Magic numbers
+    - mnd
+    # Error handling
+    - wrapcheck
+    - errorlint
+    - errname
+    - err113
+    # Test discipline
+    - thelper
+    # Safety
+    - nilnil
+    - forcetypeassert
+    - predeclared
+    # Performance
+    - usestdlibvars
+    - perfsprint
+    - mirror
+    # Security
+    - gosec
+    - bidichk
+    # DRY / Clean Code
+    - goconst
+    - dupl
+    - dupword
+    # Logging
+    - sloglint
+    - loggercheck
+    # Database
+    - sqlclosecheck
+    # API / HTTP
+    - nosprintfhostport
+    - canonicalheader
+    - musttag
+    # Naming / formatting
+    - nakedret
+    - godot
+    - asciicheck
+    - whitespace
+    - nolintlint
+    # Modern Go
+    - modernize
+    - copyloopvar
+    - intrange
+    # Interfaces
+    - iface
+    - interfacebloat
+    # Misc correctness
+    - wastedassign
+    - makezero
+    - reassign
+    - durationcheck
+    # Tracking
+    - godox
+
+  settings:
+    funlen:
+      lines: 50
+      statements: 40
+      ignore-comments: true
+    cyclop:
+      max-complexity: 10
+    nestif:
+      min-complexity: 4
+    gocognit:
+      min-complexity: 15
+    mnd:
+      ignored-numbers: ['0', '1', '-1']
+      ignored-functions:
+        - 'time.*'
+        - 'make'
+        - 'http.Status*'
+        - 'context.*'
+        - 'net.Listen'
+      ignored-files:
+        - '_test\.go$'
+    wrapcheck:
+      # Errors crossing this module's own package boundaries are already typed
+      # (apperrors) or wrapped where they leave a third-party API (store wraps
+      # every driver error), so only third-party errors must be wrapped.
+      ignore-package-globs:
+        - 'github.com/prithwirajmukherjee15-cmd/traackly/server/*'
+      ignore-sigs:
+        - '.Errorf('
+        - 'errors.New('
+        - 'apperrors.'
+    gocritic:
+      enabled-checks:
+        - dupImport
+        - nestingReduce
+        - truncateCmp
+        - unnamedResult
+        - commentedOutCode
+        - hugeParam
+        - rangeValCopy
+    misspell:
+      locale: US
+    forbidigo:
+      forbid:
+        - pattern: 'fmt\.Print.*'
+        - pattern: '^log\.(Print|Fatal|Panic)'
+        - pattern: 'os\.Getenv'
+        - pattern: 'os\.Setenv'
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+      ignore-tests: true
+    dupl:
+      threshold: 100
+    nakedret:
+      max-func-lines: 5
+    interfacebloat:
+      max: 10
+    sloglint:
+      no-mixed-args: true
+      kv-only: true
+    godox:
+      keywords: [FIXME, BUG, HACK]
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+    gosec:
+      exclude-generated: true
+    exhaustive:
+      default-signifies-exhaustive: true
+    revive:
+      rules:
+        - name: early-return
+        - name: blank-imports
+        - name: context-as-argument
+        - name: error-return
+        - name: unexported-return
+        - name: unused-parameter
+        - name: var-naming
+        - name: exported
+        - name: cognitive-complexity
+          arguments: [10]
+        - name: argument-limit
+          arguments: [4]
+        - name: max-control-nesting
+          arguments: [4]
+        - name: deep-exit
+        - name: unchecked-type-assertion
+
+  exclusions:
+    rules:
+      - path: '_test\.go$'
+        linters:
+          - funlen
+          - cyclop
+          - nestif
+          - gocognit
+          - mnd
+          - wrapcheck
+          - forbidigo
+          - errname
+          - forcetypeassert
+          - nilnil
+          - errorlint
+          - usestdlibvars
+          - perfsprint
+          - revive
+          - prealloc
+          - gosec
+          - goconst
+          - dupl
+          - nakedret
+          - godox
+          - nolintlint
+          - sloglint
+          - wastedassign
+          - err113
+          - loggercheck
+          - musttag
+          - canonicalheader
+      # The single config package is the only place allowed to call os.Getenv.
+      - path: 'config/config\.go$'
+        linters:
+          - forbidigo
+
+formatters:
+  enable:
+    - gofumpt
+    - goimports
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

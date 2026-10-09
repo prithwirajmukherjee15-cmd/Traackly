@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (UI/UX brief: one shared token set, no inline hex in components). */
+:root {
+  --brand: 0 115 234; /* #0073ea */
+  --brand-hover: 0 96 185;
+  --brand-soft: 204 229 255;
+  --ink: 50 51 56; /* #323338 */
+  --ink-muted: 103 104 121; /* #676879 */
+  --ink-faint: 151 153 170;
+  --ink-inverse: 255 255 255;
+  --canvas: 236 239 248; /* app background */
+  --surface: 255 255 255;
+  --surface-sunken: 245 246 248;
+  --surface-hover: 240 242 248;
+  --line: 230 233 239; /* #e6e9ef */
+  --line-strong: 195 198 212;
+  --danger: 216 58 82;
+  --danger-soft: 255 235 238;
+  --success: 0 133 77;
+  --success-soft: 220 247 233;
+  --warn: 255 203 0; /* amber "Updated" */
+  --warn-soft: 255 248 214;
+  --warn-ink: 92 70 0;
+  --shadow: 29 36 79;
+
+  /* Status cell fills. Text color is paired per state in src/lib/states.ts for AA contrast. */
+  --state-raised: 87 155 252; /* sky */
+  --state-authorization: 145 70 214; /* purple */
+  --state-progress: 253 171 61; /* working-on-it orange */
+  --state-updated: 255 203 0; /* amber */
+  --state-completed: 0 200 117; /* done green */
+  --state-declined: 216 58 82; /* stuck red */
+  --state-raised-ink: 37 99 196; /* AA on white */
+  --state-progress-ink: 168 98 0; /* AA on white */
+
+  /* Kiosk: dark, high contrast. */
+  --kiosk-bg: 24 27 52;
+  --kiosk-card: 41 47 76;
+  --kiosk-line: 69 77 116;
+  --kiosk-ink: 245 246 250;
+  --kiosk-muted: 181 186 214;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-canvas font-sans text-[14px] text-ink antialiased;
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-surface;
+  }
+}
+
+@layer components {
+  .page-title {
+    @apply font-display text-[22px] font-semibold tracking-tight text-ink;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,21 @@
+# Go
+server/coverage.out
+server/bin/
+*.test
+
+# Node
+node_modules/
+client/dist/
+client/coverage/
+*.tsbuildinfo
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
