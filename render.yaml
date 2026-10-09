@@ -1,0 +1,53 @@
+# Render Blueprint (TRD section 8): staging auto-deploys from `develop`;
+# production deploys from `main` only when promoted manually.
+# MongoDB lives in Atlas; set MONGODB_URI per environment in the Render dashboard.
+services:
+  - type: web
+    name: traackly-staging
+    runtime: docker
+    plan: free
+    branch: develop
+    autoDeploy: true
+    healthCheckPath: /api/health
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: traackly_staging
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_BASE_URL
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: EXPOSE_DEV_LINKS
+        value: "true"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+
+  - type: web
+    name: traackly
+    runtime: docker
+    plan: starter
+    branch: main
+    autoDeploy: false
+    healthCheckPath: /api/health
+    envVars:
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: traackly
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_BASE_URL
+        sync: false
+      - key: COOKIE_SECURE
+        value: "true"
+      - key: EXPOSE_DEV_LINKS
+        value: "false"
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
