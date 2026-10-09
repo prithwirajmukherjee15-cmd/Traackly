@@ -27,5 +27,7 @@ export function buildTimeline(r: TrackRequest): Event[] {
   // Newest first. At equal timestamps the edit sits above the status change it caused,
   // and transitions keep their recorded order (later first).
   const kindRank = (e: Event) => (e.kind === 'change' ? 1 : 0);
-  return events.sort((a, b) => b.at.localeCompare(a.at) || kindRank(b) - kindRank(a) || b.seq - a.seq);
+  // Compare real instants: the API's RFC3339Nano strings trim trailing zeros, so string order is wrong.
+  const time = (e: Event) => Date.parse(e.at);
+  return events.sort((a, b) => time(b) - time(a) || kindRank(b) - kindRank(a) || b.seq - a.seq);
 }

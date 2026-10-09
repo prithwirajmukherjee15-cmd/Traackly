@@ -129,6 +129,20 @@ describe('timeline', () => {
   });
 });
 
+describe('timeline ordering uses real time, not string order', () => {
+  it('orders timestamps whose fractional seconds differ in length', () => {
+    // Go's RFC3339Nano drops trailing zeros, so ".1Z" (later) sorts before ".12Z" as a string.
+    const r = makeRequest({
+      statusHistory: [
+        { from: '', to: 'raised', actor: 'Meera', at: '2026-10-09T09:15:07.1Z' },
+        { from: 'raised', to: 'authorization', actor: 'Founder', at: '2026-10-09T09:15:07.12Z' },
+        { from: 'authorization', to: 'in_progress', actor: 'Founder', at: '2026-10-09T09:15:07.12Z' },
+      ],
+    });
+    expect(buildTimeline(r).map((e) => e.to)).toEqual(['in_progress', 'authorization', 'raised']);
+  });
+});
+
 describe('board grouping', () => {
   it('puts updated requests first and keeps every state', () => {
     const groups = groupByState([
