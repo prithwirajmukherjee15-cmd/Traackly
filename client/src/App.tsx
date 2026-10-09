@@ -80,18 +80,21 @@ export function AppRoutes() {
 
       <Route element={<RequireOffice />}>
         <Route element={<Only roles={['coordinator']} />}>
-          <Route path="/requests" element={<CoordinatorDashboard />} />
-          <Route path="/requests/new" element={<NewRequestPage />} />
-          <Route path="/requests/:id" element={<CoordinatorRequestPage />} />
+          <Route path="/requests" element={<CoordinatorDashboard />}>
+            <Route path="new" element={<NewRequestPage />} />
+            <Route path=":id" element={<CoordinatorRequestPage />} />
+          </Route>
         </Route>
         <Route element={<Only roles={['authorizer']} />}>
-          <Route path="/authorize" element={<AuthorizationQueue />} />
-          <Route path="/authorize/:id" element={<ReviewRequestPage />} />
+          <Route path="/authorize" element={<AuthorizationQueue />}>
+            <Route path=":id" element={<ReviewRequestPage />} />
+          </Route>
           <Route path="/team" element={<TeamPage />} />
         </Route>
         <Route element={<Only roles={['logistics']} />}>
-          <Route path="/logistics" element={<LogisticsQueue />} />
-          <Route path="/logistics/requests/:id" element={<TimelinePage />} />
+          <Route path="/logistics" element={<LogisticsQueue />}>
+            <Route path="requests/:id" element={<TimelinePage />} />
+          </Route>
         </Route>
         <Route path="/profile" element={<ProfilePage />} />
       </Route>

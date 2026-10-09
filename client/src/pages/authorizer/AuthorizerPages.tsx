@@ -1,28 +1,34 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { AlertTriangle, CheckCircle2, Coffee, Save, XCircle } from 'lucide-react';
-import { PageHeader } from '../../components/layout/AppShell';
-import { ChangelogTimeline } from '../../components/requests/Changelog';
-import { RequestBoard } from '../../components/requests/RequestBoard';
-import { groupByState } from '../../lib/grouping';
+import { BoardView } from '../../components/board/Board';
+import { ItemPanel } from '../../components/board/ItemPanel';
+import { ActivityLog, ItemMeta, PanelLoading, PanelNotFound } from '../../components/board/RequestPanel';
+import { groupByState, type BoardGroup } from '../../lib/grouping';
 import { RequestDetails } from '../../components/requests/RequestDetails';
 import { RequestFormFields } from '../../components/requests/RequestForm';
 import { fieldsOf, sameFields, toBody, validateFields } from '../../lib/requestFields';
 import { Button } from '../../components/ui/Button';
-import { Banner, Card, EmptyState, Spinner } from '../../components/ui/Feedback';
+import { Banner, Card, EmptyState } from '../../components/ui/Feedback';
 import { TextArea } from '../../components/ui/Field';
 import { Tabs } from '../../components/ui/FilterChips';
 import { Modal } from '../../components/ui/Modal';
-import { StatusBadge } from '../../components/ui/StatusPill';
 import { api, ApiError } from '../../lib/api';
 import { useRequest, useRequests } from '../../lib/queries';
 import { useToast } from '../../lib/toast';
 import type { RequestFields, TrackRequest } from '../../lib/types';
-import { BackLink } from '../coordinator/CoordinatorPages';
-import { NotFoundPanel } from '../NotFound';
 
 type View = 'pending' | 'authorized';
+
+const pendingStages = (items: TrackRequest[]): BoardGroup[] => [
+  { key: 'pending', title: 'Awaiting review', tone: 'raised', items },
+];
+const authorizedStages = (items: TrackRequest[]) =>
+  groupByState(items, {
+    in_progress: 'In progress',
+    updated: 'Updated — awaiting downstream acknowledgment',
+  });
 
 /** S-20: pending requests by default, plus already-authorized ones that may still need edits. */
 export function AuthorizationQueue() {
@@ -30,49 +36,44 @@ export function AuthorizationQueue() {
   const pending = useRequests({ view: 'pending' });
   const authorized = useRequests({ view: 'authorized' });
   const current = view === 'pending' ? pending : authorized;
-  const items = current.data ?? [];
+  const items = useMemo(() => current.data ?? [], [current.data]);
   return (
     <>
-      <PageHeader
+      <BoardView
+        key={view}
         title="Authorization queue"
-        subtitle="Approve, edit or decline. Edits after approval are flagged downstream automatically."
+        description="Approve, edit or decline. Edits after approval are flagged downstream automatically."
+        storageKey="authorizer"
+        scopes={
+          <Tabs
+            value={view}
+            onChange={setView}
+            label="Queue"
+            tabs={[
+              { value: 'pending', label: 'Pending', count: pending.data?.length },
+              { value: 'authorized', label: 'All authorized', count: authorized.data?.length },
+            ]}
+          />
+        }
+        items={items}
+        stageGroups={view === 'pending' ? pendingStages : authorizedStages}
+        columns={['person', 'status', 'department', 'priority', 'timeline', 'updated']}
+        href={(r) => `/authorize/${r.id}`}
+        loading={current.isLoading}
+        error={current.isError}
+        empty={
+          <EmptyState
+            icon={<Coffee size={28} />}
+            title={view === 'pending' ? 'No requests waiting for authorization' : 'Nothing authorized yet'}
+            body={
+              view === 'pending'
+                ? "You're all caught up. New requests appear here the moment they're raised."
+                : undefined
+            }
+          />
+        }
       />
-      <div className="px-6 pb-5 lg:px-8">
-        <Tabs
-          value={view}
-          onChange={setView}
-          tabs={[
-            { value: 'pending', label: 'Pending', count: pending.data?.length },
-            { value: 'authorized', label: 'All authorized', count: authorized.data?.length },
-          ]}
-        />
-      </div>
-      {current.isLoading ? (
-        <Spinner label="Loading queue" />
-      ) : items.length === 0 ? (
-        <EmptyState
-          icon={<Coffee size={28} />}
-          title={view === 'pending' ? 'No requests waiting for authorization' : 'Nothing authorized yet'}
-          body={
-            view === 'pending'
-              ? "You're all caught up. New requests appear here the moment they're raised."
-              : undefined
-          }
-        />
-      ) : (
-        <RequestBoard
-          groups={
-            view === 'pending'
-              ? [{ key: 'pending', title: 'Awaiting review', tone: 'raised', items }]
-              : groupByState(items, {
-                  in_progress: 'In progress',
-                  updated: 'Updated — awaiting downstream acknowledgment',
-                })
-          }
-          href={(r) => `/authorize/${r.id}`}
-          columns={['status', 'department', 'priority', 'timeline', 'owner']}
-        />
-      )}
+      <Outlet />
     </>
   );
 }
@@ -85,9 +86,8 @@ function notifiedCopy(owners: string) {
 export function ReviewRequestPage() {
   const { id } = useParams();
   const { data: request, isLoading, error } = useRequest(id);
-  if (isLoading) return <Spinner label="Loading request" />;
-  if (error || !request)
-    return <NotFoundPanel title="Request not found" to="/authorize" label="Back to queue" />;
+  if (isLoading) return <PanelLoading closeTo="/authorize" />;
+  if (error || !request) return <PanelNotFound closeTo="/authorize" label="Back to queue" />;
   return <ReviewForm request={request} />;
 }
 
@@ -174,86 +174,87 @@ function ReviewForm({ request }: { request: TrackRequest }) {
     });
   };
 
-  return (
+  const actions = editable && (
     <>
-      <PageHeader
-        title={isRaised ? 'Review request' : request.clientName}
-        subtitle={
-          <span className="inline-flex items-center gap-2">
-            <span className="font-mono text-[13px]">{request.jobCode}</span>
-            <StatusBadge state={request.state} />
-          </span>
-        }
-        back={<BackLink to="/authorize" label="Authorization queue" />}
-      />
-      <div className="grid gap-6 px-6 pb-12 lg:px-8 xl:grid-cols-[minmax(0,1fr)_420px]">
-        <div className="space-y-4">
-          {conflict && <Banner tone="warning">{conflict}</Banner>}
-          {!editable ? (
-            <RequestDetails request={request} />
-          ) : (
-            <>
-              {!isRaised && (
-                <Banner tone={dirty ? 'warning' : 'info'}>
-                  {dirty
-                    ? 'Saving will mark this request Updated, log every changed field, and require Logistics (and the floor, if scheduled) to acknowledge before work continues.'
-                    : 'This request is authorized. Edits are logged and flagged downstream automatically — no re-approval needed.'}
-                </Banner>
-              )}
-              <Card className="p-6">
-                <RequestFormFields
-                  value={fields}
-                  onChange={setFields}
-                  errors={errors}
-                  original={isRaised ? undefined : original}
-                />
-              </Card>
-              <div className="flex flex-wrap items-center justify-end gap-2">
-                <Button
-                  variant="secondary"
-                  onClick={() => (dirty ? setFields(original) : navigate('/authorize'))}
-                >
-                  {dirty ? 'Discard changes' : 'Cancel'}
-                </Button>
-                {isRaised ? (
-                  <>
-                    <Button
-                      variant="destructive"
-                      icon={<XCircle size={16} />}
-                      onClick={() => setDeclineOpen(true)}
-                      disabled={busy !== null}
-                    >
-                      Decline
-                    </Button>
-                    <Button
-                      icon={<CheckCircle2 size={16} />}
-                      onClick={approve}
-                      loading={busy === 'approve'}
-                      disabled={!valid}
-                    >
-                      {dirty ? 'Save & approve' : 'Approve'}
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    variant={dirty ? 'warning' : 'primary'}
-                    icon={dirty ? <AlertTriangle size={16} /> : <Save size={16} />}
-                    onClick={save}
-                    loading={busy === 'save'}
-                    disabled={!dirty || !valid}
-                  >
-                    Save changes
-                  </Button>
-                )}
-              </div>
-            </>
+      <Button variant="secondary" onClick={() => (dirty ? setFields(original) : navigate('/authorize'))}>
+        {dirty ? 'Discard changes' : 'Cancel'}
+      </Button>
+      {isRaised ? (
+        <>
+          <Button
+            variant="destructive"
+            icon={<XCircle size={16} />}
+            onClick={() => setDeclineOpen(true)}
+            disabled={busy !== null}
+          >
+            Decline
+          </Button>
+          <Button
+            icon={<CheckCircle2 size={16} />}
+            onClick={approve}
+            loading={busy === 'approve'}
+            disabled={!valid}
+          >
+            {dirty ? 'Save & approve' : 'Approve'}
+          </Button>
+        </>
+      ) : (
+        <Button
+          variant={dirty ? 'warning' : 'primary'}
+          icon={dirty ? <AlertTriangle size={16} /> : <Save size={16} />}
+          onClick={save}
+          loading={busy === 'save'}
+          disabled={!dirty || !valid}
+        >
+          Save changes
+        </Button>
+      )}
+    </>
+  );
+
+  const review = (
+    <div className="space-y-4">
+      {conflict && <Banner tone="warning">{conflict}</Banner>}
+      {!editable ? (
+        <RequestDetails request={request} />
+      ) : (
+        <>
+          {!isRaised && (
+            <Banner tone={dirty ? 'warning' : 'info'}>
+              {dirty
+                ? 'Saving will mark this request Updated, log every changed field, and require Logistics (and the floor, if scheduled) to acknowledge before work continues.'
+                : 'This request is authorized. Edits are logged and flagged downstream automatically — no re-approval needed.'}
+            </Banner>
           )}
-        </div>
-        <Card className="h-fit p-5">
-          <h2 className="mb-4 font-display text-base font-semibold">Activity & changelog</h2>
-          <ChangelogTimeline request={request} />
-        </Card>
-      </div>
+          <Card className="p-6">
+            <RequestFormFields
+              value={fields}
+              onChange={setFields}
+              errors={errors}
+              original={isRaised ? undefined : original}
+            />
+          </Card>
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <ItemPanel
+      title={request.clientName}
+      closeTo="/authorize"
+      meta={<ItemMeta request={request} />}
+      footer={actions || undefined}
+      tabs={[
+        { key: 'review', label: isRaised ? 'Review' : editable ? 'Edit' : 'Details', content: review },
+        {
+          key: 'activity',
+          label: 'Activity log',
+          count: request.changelog.length,
+          content: <ActivityLog request={request} />,
+        },
+      ]}
+    >
       <Modal
         open={declineOpen}
         title="Decline this request?"
@@ -282,6 +283,6 @@ function ReviewForm({ request }: { request: TrackRequest }) {
           maxLength={2000}
         />
       </Modal>
-    </>
+    </ItemPanel>
   );
 }

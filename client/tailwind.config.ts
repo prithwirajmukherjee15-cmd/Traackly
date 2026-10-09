@@ -33,6 +33,8 @@ export default {
           'raised-ink': v('state-raised-ink'),
           'progress-ink': v('state-progress-ink'),
         },
+        prio: { urgent: v('prio-urgent'), normal: v('prio-normal') },
+        dept: { production: v('dept-production'), supply: v('dept-supply'), qa: v('dept-qa') },
         kiosk: { bg: v('kiosk-bg'), card: v('kiosk-card'), line: v('kiosk-line'), ink: v('kiosk-ink'), muted: v('kiosk-muted') },
       },
       boxShadow: {
@@ -48,6 +50,8 @@ export default {
         'row-in': { from: { opacity: '0', transform: 'translateY(10px)' }, to: { opacity: '1', transform: 'none' } },
         'drawer-in': { from: { transform: 'translateX(100%)' }, to: { transform: 'translateX(0)' } },
         'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
+        'menu-in': { from: { opacity: '0', transform: 'translateY(-4px) scale(0.98)' }, to: { opacity: '1', transform: 'none' } },
+        'bar-up': { from: { opacity: '0', transform: 'translate(-50%, 16px)' }, to: { opacity: '1', transform: 'translate(-50%, 0)' } },
       },
       animation: {
         marquee: 'marquee 40s linear infinite',
@@ -56,6 +60,8 @@ export default {
         'row-in': 'row-in 0.5s cubic-bezier(0.645, 0.045, 0.355, 1) both',
         'drawer-in': 'drawer-in 0.35s cubic-bezier(0.645, 0.045, 0.355, 1) both',
         'fade-in': 'fade-in 0.25s ease-out both',
+        'menu-in': 'menu-in 0.15s ease-out both',
+        'bar-up': 'bar-up 0.3s cubic-bezier(0.645, 0.045, 0.355, 1) both',
       },
       transitionTimingFunction: {
         // Measured from the reference site's hover and reveal transitions.

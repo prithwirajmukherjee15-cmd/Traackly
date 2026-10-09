@@ -1,8 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { makeRequest } from '../test/fixtures';
+import { BoardView } from './board/Board';
+import { ItemPanel } from './board/ItemPanel';
 import { RequestBoard } from './requests/RequestBoard';
+import { Modal } from './ui/Modal';
+import { groupByState } from '../lib/grouping';
 import { FieldDiff } from './requests/Changelog';
 import { RequestFormFields } from './requests/RequestForm';
 import { StatusCell } from './ui/StatusPill';
@@ -85,5 +89,92 @@ describe('RequestFormFields', () => {
     expect(onChange).toHaveBeenCalledWith({ ...EMPTY_FIELDS, priority: 'urgent' });
     await userEvent.selectOptions(screen.getByLabelText('Target department'), 'qa');
     expect(onChange).toHaveBeenCalledWith({ ...EMPTY_FIELDS, targetDepartment: 'qa' });
+  });
+});
+
+describe('BoardView', () => {
+  beforeEach(() => localStorage.clear());
+  const items = [
+    makeRequest({ id: 'a', clientName: 'BHEL Haridwar', state: 'raised' }),
+    makeRequest({ id: 'b', clientName: 'Kirloskar Motors', state: 'in_progress' }),
+  ];
+  const renderBoard = () =>
+    render(
+      <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <BoardView
+          title="My requests"
+          storageKey="test"
+          items={items}
+          stageGroups={groupByState}
+          columns={['status']}
+          href={(r) => `/requests/${r.id}`}
+        />
+      </MemoryRouter>,
+    );
+
+  it('searches client-side and offers to clear when nothing matches', async () => {
+    renderBoard();
+    await userEvent.type(screen.getByLabelText('Search requests'), 'kirlo');
+    expect(screen.getByRole('link', { name: 'Kirloskar Motors' })).toBeInTheDocument();
+    expect(screen.queryByRole('link', { name: 'BHEL Haridwar' })).not.toBeInTheDocument();
+    await userEvent.type(screen.getByLabelText('Search requests'), 'zzz');
+    await userEvent.click(screen.getByRole('button', { name: 'Clear search and filters' }));
+    expect(screen.getByRole('link', { name: 'BHEL Haridwar' })).toBeInTheDocument();
+  });
+
+  it('filters by status and switches to Kanban', async () => {
+    renderBoard();
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+    await userEvent.click(screen.getByLabelText('Raised'));
+    expect(screen.queryByRole('link', { name: 'Kirloskar Motors' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('tab', { name: 'Kanban' }));
+    expect(screen.getByRole('region', { name: /Raised/ })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'BHEL Haridwar' })).toBeInTheDocument();
+  });
+
+  it('selects rows and shows the bulk action bar', async () => {
+    renderBoard();
+    await userEvent.click(screen.getByLabelText('Select BHEL Haridwar'));
+    expect(screen.getByRole('region', { name: 'Selected requests' })).toHaveTextContent('1Request selected');
+    await userEvent.click(screen.getByRole('button', { name: 'Clear selection' }));
+    expect(screen.queryByRole('region', { name: 'Selected requests' })).not.toBeInTheDocument();
+  });
+});
+
+describe('ItemPanel', () => {
+  function Harness({ modal }: { modal: boolean }) {
+    return (
+      <MemoryRouter
+        initialEntries={['/requests/a']}
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
+        <Routes>
+          <Route path="/requests" element={<p>Board</p>} />
+          <Route
+            path="/requests/a"
+            element={
+              <ItemPanel title="BHEL Haridwar" closeTo="/requests">
+                <Modal open={modal} title="Confirm" onClose={() => {}}>
+                  <p>Inner dialog</p>
+                </Modal>
+              </ItemPanel>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+  }
+
+  it('closes on Escape back to the board', async () => {
+    render(<Harness modal={false} />);
+    expect(screen.getByRole('dialog', { name: 'BHEL Haridwar' })).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.getByText('Board')).toBeInTheDocument();
+  });
+
+  it('leaves Escape to a dialog opened inside it', async () => {
+    render(<Harness modal />);
+    await userEvent.keyboard('{Escape}');
+    expect(screen.getByRole('dialog', { name: 'BHEL Haridwar' })).toBeInTheDocument();
   });
 });

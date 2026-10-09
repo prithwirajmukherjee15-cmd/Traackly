@@ -1,4 +1,14 @@
 import { code39Bars } from './barcode';
+import {
+  activeFilterCount,
+  applyControls,
+  DEFAULT_CONTROLS,
+  regroup,
+  stateBreakdown,
+  timelineProgress,
+  toCsv,
+  type BoardControls,
+} from './board';
 import { dateInputToISO, initials, isoToDateInput, timeAgo } from './format';
 import { groupByState } from './grouping';
 import { EMPTY_FIELDS, sameFields, toBody, validateFields } from './requestFields';
@@ -152,5 +162,95 @@ describe('board grouping', () => {
     expect(groups[0]!.key).toBe('updated');
     expect(groups[0]!.items.map((r) => r.id)).toEqual(['b']);
     expect(groups.map((g) => g.key)).toContain('declined');
+  });
+});
+
+describe('board controls', () => {
+  const items = [
+    makeRequest({
+      id: 'a',
+      clientName: 'BHEL Haridwar',
+      state: 'raised',
+      targetDepartment: 'supply',
+      updatedAt: '2026-10-01T00:00:00Z',
+    }),
+    makeRequest({
+      id: 'b',
+      clientName: 'Kirloskar',
+      state: 'in_progress',
+      priority: 'urgent',
+      updatedAt: '2026-10-03T00:00:00Z',
+    }),
+    makeRequest({
+      id: 'c',
+      clientName: 'Siemens',
+      jobCode: 'TRK-XYZ999',
+      state: 'updated',
+      targetDepartment: 'qa',
+      updatedAt: '2026-10-02T00:00:00Z',
+      timeline: {
+        estimate: '2026-10-05T00:00:00Z',
+        setBy: { id: 'l', name: 'L' },
+        setAt: '2026-10-01T00:00:00Z',
+      },
+    }),
+  ];
+
+  it('searches name, job code and details, every term must match', () => {
+    expect(applyControls(items, { ...DEFAULT_CONTROLS, search: 'xyz999' }).map((r) => r.id)).toEqual(['c']);
+    expect(applyControls(items, { ...DEFAULT_CONTROLS, search: 'bhel brush' }).map((r) => r.id)).toEqual([
+      'a',
+    ]);
+    expect(applyControls(items, { ...DEFAULT_CONTROLS, search: 'bhel kirloskar' })).toEqual([]);
+  });
+
+  it('filters within a field as OR and across fields as AND', () => {
+    const c: BoardControls = { ...DEFAULT_CONTROLS, states: ['raised', 'updated'], departments: ['qa'] };
+    expect(applyControls(items, c).map((r) => r.id)).toEqual(['c']);
+    expect(activeFilterCount({ ...DEFAULT_CONTROLS, states: ['raised'], priorities: ['urgent'] })).toBe(2);
+  });
+
+  it('sorts by last update by default and puts undated requests last by due date', () => {
+    expect(applyControls(items, DEFAULT_CONTROLS).map((r) => r.id)).toEqual(['b', 'c', 'a']);
+    expect(applyControls(items, { ...DEFAULT_CONTROLS, sort: 'due' })[0]!.id).toBe('c');
+    expect(applyControls(items, { ...DEFAULT_CONTROLS, sort: 'client' }).map((r) => r.id)).toEqual([
+      'a',
+      'b',
+      'c',
+    ]);
+  });
+
+  it('regroups by department or priority, otherwise uses the page stages', () => {
+    expect(regroup(items, 'department', groupByState).map((g) => [g.key, g.items.length])).toEqual([
+      ['production', 1],
+      ['supply', 1],
+      ['qa', 1],
+    ]);
+    expect(regroup(items, 'priority', groupByState)[0]!.items.map((r) => r.id)).toEqual(['b']);
+    expect(regroup(items, 'stage', groupByState)[0]!.key).toBe('updated');
+  });
+
+  it('summarises states for the battery bar', () => {
+    expect(stateBreakdown([...items, makeRequest({ id: 'd', state: 'raised' })])).toEqual([
+      { state: 'updated', count: 1 },
+      { state: 'raised', count: 2 },
+      { state: 'in_progress', count: 1 },
+    ]);
+  });
+
+  it('measures timeline progress between scheduling and the estimate', () => {
+    const r = items[2]!;
+    expect(timelineProgress(items[0]!)).toBeNull();
+    expect(timelineProgress(r, Date.parse('2026-10-03T00:00:00Z'))).toBeCloseTo(0.5);
+    expect(timelineProgress(r, Date.parse('2026-11-01T00:00:00Z'))).toBe(1);
+    expect(timelineProgress({ ...r, state: 'completed' }, Date.parse('2026-10-01T00:00:00Z'))).toBe(1);
+  });
+
+  it('exports CSV with quoting', () => {
+    const csv = toCsv([makeRequest({ clientName: 'Acme, "Pune"', requirementDetails: 'Line 1\nLine 2' })]);
+    const [head, row] = csv.split('\n');
+    expect(head).toBe('Job code,Client,Status,Department,Priority,Due,Raised by,Last updated,Details');
+    expect(row).toContain('"Acme, ""Pune"""');
+    expect(csv).toContain('"Line 1\nLine 2"');
   });
 });
