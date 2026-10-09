@@ -26,6 +26,14 @@
   --warn-ink: 92 70 0;
   --shadow: 29 36 79;
 
+  /* Marketing site */
+  --accent: 97 97 255; /* indigo pill CTA */
+  --accent-hover: 80 80 230;
+  --accent-soft: 229 229 255;
+  --panel-warm: 242 237 233;
+  --panel-cool: 243 244 245;
+  --ink-black: 0 0 0;
+
   /* Status cell fills. Text color is paired per state in src/lib/states.ts for AA contrast. */
   --state-raised: 87 155 252; /* sky */
   --state-authorization: 145 70 214; /* purple */
@@ -35,6 +43,13 @@
   --state-declined: 216 58 82; /* stuck red */
   --state-raised-ink: 37 99 196; /* AA on white */
   --state-progress-ink: 168 98 0; /* AA on white */
+
+  /* Label columns (white text on each passes AA). */
+  --prio-urgent: 216 58 82;
+  --prio-normal: 85 89 223;
+  --dept-production: 3 127 76;
+  --dept-supply: 0 102 153;
+  --dept-qa: 120 75 209;
 
   /* Kiosk: dark, high contrast. */
   --kiosk-bg: 24 27 52;
@@ -60,7 +75,7 @@
 
 @layer components {
   .page-title {
-    @apply font-display text-[22px] font-semibold tracking-tight text-ink;
+    @apply font-display text-[24px] font-medium leading-tight tracking-[-0.01em] text-ink;
   }
 }
 
