@@ -7,7 +7,7 @@ import {
 } from 'react';
 
 const CONTROL =
-  'w-full rounded border bg-surface px-3 text-sm text-ink placeholder:text-ink-faint transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/25 disabled:bg-surface-sunken disabled:text-ink-muted';
+  'w-full rounded border bg-surface px-4 text-base text-ink placeholder:text-ink-muted transition-[border-color] duration-100 ease-in hover:border-ink focus:border-brand focus:outline-none disabled:bg-surface-sunken disabled:text-ink-muted';
 
 interface FieldProps {
   label: string;

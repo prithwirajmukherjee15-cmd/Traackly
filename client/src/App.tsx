@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppShell } from './components/layout/AppShell';
@@ -48,9 +48,18 @@ function Only({ roles, children }: { roles: Role[]; children?: ReactNode }) {
   return <>{children ?? <Outlet />}</>;
 }
 
+const HomePage = lazy(() => import('./pages/marketing/HomePage').then((m) => ({ default: m.HomePage })));
+
+/** "/" is the public homepage for visitors and the role landing screen for signed-in users. */
 function Home() {
-  const { user } = useAuth();
-  return <Navigate to={user ? ROLE_HOME[user.role] : '/login'} replace />;
+  const { user, loading } = useAuth();
+  if (loading) return <Spinner />;
+  if (user) return <Navigate to={ROLE_HOME[user.role]} replace />;
+  return (
+    <Suspense fallback={<Spinner />}>
+      <HomePage />
+    </Suspense>
+  );
 }
 
 export function AppRoutes() {
@@ -67,8 +76,9 @@ export function AppRoutes() {
         <Route path="jobs/:id" element={<KioskJobPage />} />
       </Route>
 
+      <Route path="/" element={<Home />} />
+
       <Route element={<RequireOffice />}>
-        <Route index element={<Home />} />
         <Route element={<Only roles={['coordinator']} />}>
           <Route path="/requests" element={<CoordinatorDashboard />} />
           <Route path="/requests/new" element={<NewRequestPage />} />

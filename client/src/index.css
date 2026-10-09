@@ -26,6 +26,14 @@
   --warn-ink: 92 70 0;
   --shadow: 29 36 79;
 
+  /* Marketing site */
+  --accent: 97 97 255; /* indigo pill CTA */
+  --accent-hover: 80 80 230;
+  --accent-soft: 229 229 255;
+  --panel-warm: 242 237 233;
+  --panel-cool: 243 244 245;
+  --ink-black: 0 0 0;
+
   /* Status cell fills. Text color is paired per state in src/lib/states.ts for AA contrast. */
   --state-raised: 87 155 252; /* sky */
   --state-authorization: 145 70 214; /* purple */
