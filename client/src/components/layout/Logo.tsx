@@ -4,25 +4,26 @@ export function LogoMark({ size = 28 }: { size?: number }) {
     <svg width={size} height={size} viewBox="0 0 64 64" aria-hidden>
       <rect width="64" height="64" rx="16" className="fill-brand" />
       <path
-        d="M16.5 26.5H28.5L34 32L47.5 17.5"
+        d="M26 12V40Q26 50 36 50H40"
         fill="none"
-        strokeWidth="8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="stroke-state-updated"
-      />
-      <path
-        d="M25.5 13.5V40.5Q25.5 50.5 35.5 50.5H39.5"
-        fill="none"
-        strokeWidth="8"
+        strokeWidth="7.5"
         strokeLinecap="round"
         strokeLinejoin="round"
         className="stroke-surface"
+      />
+      <path
+        d="M16 25H30L35 30L50 14"
+        fill="none"
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="stroke-state-updated"
       />
     </svg>
   );
 }
 
+/** Mark + wordmark; the double "aa" is picked out so the name is spelled right. */
 export function Logo({ inverse = false }: { inverse?: boolean }) {
   return (
     <span className="inline-flex items-center gap-2">
@@ -30,7 +31,7 @@ export function Logo({ inverse = false }: { inverse?: boolean }) {
       <span
         className={`font-display text-[19px] font-semibold tracking-tight ${inverse ? 'text-kiosk-ink' : 'text-ink'}`}
       >
-        traackly
+        tr<span className={inverse ? 'text-brand-on-dark' : 'text-brand'}>aa</span>ckly
       </span>
     </span>
   );

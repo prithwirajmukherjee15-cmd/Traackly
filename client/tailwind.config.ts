@@ -12,7 +12,12 @@ export default {
         display: ['Poppins', 'Figtree', 'system-ui', 'sans-serif'],
       },
       colors: {
-        brand: { DEFAULT: v('brand'), hover: v('brand-hover'), soft: v('brand-soft') },
+        brand: {
+          DEFAULT: v('brand'),
+          hover: v('brand-hover'),
+          soft: v('brand-soft'),
+          'on-dark': v('brand-on-dark'),
+        },
         ink: { DEFAULT: v('ink'), muted: v('ink-muted'), faint: v('ink-faint'), inverse: v('ink-inverse') },
         canvas: v('canvas'),
         accent: { DEFAULT: v('accent'), hover: v('accent-hover'), soft: v('accent-soft') },
@@ -35,7 +40,13 @@ export default {
         },
         prio: { urgent: v('prio-urgent'), normal: v('prio-normal') },
         dept: { production: v('dept-production'), supply: v('dept-supply'), qa: v('dept-qa') },
-        kiosk: { bg: v('kiosk-bg'), card: v('kiosk-card'), line: v('kiosk-line'), ink: v('kiosk-ink'), muted: v('kiosk-muted') },
+        kiosk: {
+          bg: v('kiosk-bg'),
+          card: v('kiosk-card'),
+          line: v('kiosk-line'),
+          ink: v('kiosk-ink'),
+          muted: v('kiosk-muted'),
+        },
       },
       boxShadow: {
         panel: '0 4px 20px rgb(var(--shadow) / 0.08)',
@@ -46,12 +57,24 @@ export default {
         marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-100%)' } },
         float: { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
         'draw-line': { from: { transform: 'scaleY(0)' }, to: { transform: 'scaleY(1)' } },
-        'pop-in': { from: { opacity: '0', transform: 'scale(0.92)' }, to: { opacity: '1', transform: 'scale(1)' } },
-        'row-in': { from: { opacity: '0', transform: 'translateY(10px)' }, to: { opacity: '1', transform: 'none' } },
+        'pop-in': {
+          from: { opacity: '0', transform: 'scale(0.92)' },
+          to: { opacity: '1', transform: 'scale(1)' },
+        },
+        'row-in': {
+          from: { opacity: '0', transform: 'translateY(10px)' },
+          to: { opacity: '1', transform: 'none' },
+        },
         'drawer-in': { from: { transform: 'translateX(100%)' }, to: { transform: 'translateX(0)' } },
         'fade-in': { from: { opacity: '0' }, to: { opacity: '1' } },
-        'menu-in': { from: { opacity: '0', transform: 'translateY(-4px) scale(0.98)' }, to: { opacity: '1', transform: 'none' } },
-        'bar-up': { from: { opacity: '0', transform: 'translate(-50%, 16px)' }, to: { opacity: '1', transform: 'translate(-50%, 0)' } },
+        'menu-in': {
+          from: { opacity: '0', transform: 'translateY(-4px) scale(0.98)' },
+          to: { opacity: '1', transform: 'none' },
+        },
+        'bar-up': {
+          from: { opacity: '0', transform: 'translate(-50%, 16px)' },
+          to: { opacity: '1', transform: 'translate(-50%, 0)' },
+        },
       },
       animation: {
         marquee: 'marquee 40s linear infinite',
@@ -66,8 +89,8 @@ export default {
       transitionTimingFunction: {
         // Measured from the reference site's hover and reveal transitions.
         'out-soft': 'cubic-bezier(0.645, 0.045, 0.355, 1)',
-        'pill': 'cubic-bezier(0.515, 0.147, 0.25, 1)',
-        'spring': 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        pill: 'cubic-bezier(0.515, 0.147, 0.25, 1)',
+        spring: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
       },
     },
   },
