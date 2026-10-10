@@ -58,6 +58,8 @@ Traackly replaces that email chain with one live board for each role, and enforc
 
 # For developers
 
+Logo files, colours and usage notes are in [`docs/brand`](docs/brand).
+
 The UI follows monday.com's design language: colour-coded board groups, full-colour status cells, and a tinted canvas with a white working panel. The floor kiosk uses a separate dark, high-contrast mode with large touch targets.
 
 ## The core mechanic (PRD Story 3)
