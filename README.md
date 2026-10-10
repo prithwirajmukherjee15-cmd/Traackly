@@ -1,15 +1,64 @@
+<div align="center">
+
+<img src="docs/media/logo.svg" width="64" height="64" alt="Traackly logo">
+
 # Traackly
 
-A lightweight request-tracking layer for manufacturing SMBs. Coordinators raise structured requests that move through a defined lifecycle, and **any change made after authorization must be explicitly acknowledged by whoever executes it next before that work can proceed**. That one mechanic is the fix for the stale-spec failure described in the PRD: a railway order built for weeks to an outdated spec.
+**Every request, from order desk to shop floor.**
 
-The UI takes its cues from monday.com: color-coded board groups, full-color status cells, a tinted canvas with a white working panel. The floor kiosk uses a separate dark, high-contrast, large-touch-target mode.
+The request layer for manufacturers where an edit made after approval can't slip past the people doing the work.
+
+[▶ Watch the walkthrough (5:53)](docs/media/traackly-walkthrough.mp4) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
+
+<a href="docs/media/traackly-walkthrough.mp4"><img src="docs/media/walkthrough-preview.gif" width="880" alt="Traackly in 30 seconds: the homepage, a live request board, a new request, the change log, the floor kiosk flagging a change, and the completed request"></a>
+
+<sub>A 30-second preview. Click it for the full walkthrough with voice-over.</sub>
+
+</div>
+
+## What is Traackly?
+
+In most small manufacturing businesses, an order travels from the order desk to approval, then to logistics, then to the shop floor, over email chains and phone calls. When someone changes the specification *after* it was approved, that change often never reaches the people building it, and the job gets made to the old spec.
+
+Traackly replaces that email chain with one live board for each role, and enforces one rule:
+
+> **Every edit made after approval must be acknowledged by whoever works on it next, before that work can continue.**
+
+## How it works
+
+1. **Raise.** A Coordinator raises a structured request: client, exact requirement, department and priority.
+2. **Authorize.** An Authorizer approves it, corrects it, or declines it with a reason.
+3. **Schedule.** Logistics sets an estimated completion date, and the job appears on that department's floor kiosk.
+4. **Build.** The floor works from a shared kiosk screen: big type, big buttons and a barcode for every job. No individual logins.
+5. **Change, then acknowledge.** If the Authorizer edits the request after approval, it turns **Updated**. Logistics and the floor are notified, *Mark done* stays locked until both have acknowledged, and every changed field is logged permanently with its old and new value.
+
+| | |
+|---|---|
+| <img src="docs/media/homepage.png" alt="Traackly homepage"><br><sub>**The homepage.** What a new visitor sees first.</sub> | <img src="docs/media/board.png" alt="Request board with colour-coded groups and status cells"><br><sub>**Live boards.** Requests grouped by stage, with search, filters, sorting, group by, and a Kanban view.</sub> |
+| <img src="docs/media/change-log.png" alt="Item panel showing the before and after of a change"><br><sub>**Nothing changes silently.** Every edit after approval is logged field by field.</sub> | <img src="docs/media/kiosk-flagged.png" alt="Floor kiosk flagging a changed job"><br><sub>**The floor kiosk.** A changed job is flagged, and *Mark done* is locked until someone acknowledges the change.</sub> |
+
+### Who uses it
 
 | Role | Lands on | Does |
 |---|---|---|
-| Coordinator | `/requests` | Raises requests, watches them live (S-10..S-12) |
-| Authorizer | `/authorize` | Approves / declines / edits, manages team & kiosk stations (S-20, S-21, S-91) |
-| Logistics | `/logistics` | Sets and revises execution timelines (S-30, S-31) |
-| Floor supervisor / kiosk | `/kiosk` | Department job queue, acknowledges changes, marks jobs done (S-40, S-41) |
+| Coordinator | `/requests` | Raises requests and watches them update live |
+| Authorizer | `/authorize` | Approves, declines and edits requests; manages the team and kiosk stations |
+| Logistics | `/logistics` | Sets and revises execution timelines |
+| Floor supervisor / kiosk | `/kiosk` | Works the department's job queue, acknowledges changes, marks jobs done |
+
+### Why it holds up
+
+- **Live everywhere.** Boards and kiosks update within about a second over WebSocket, with no refresh.
+- **History can't be rewritten.** The change log is append-only at the database level.
+- **No silent overwrites.** If two people edit at once, the second save is stopped and shown the latest version.
+- **Built for the floor.** Shared station kiosks need no logins, and an acknowledgment tapped while offline syncs automatically when the connection returns.
+- **Locked down.** Accounts are invite-only, every route checks the role on the server, and deactivating someone ends their sessions on their very next request.
+
+---
+
+# For developers
+
+The UI follows monday.com's design language: colour-coded board groups, full-colour status cells, and a tinted canvas with a white working panel. The floor kiosk uses a separate dark, high-contrast mode with large touch targets.
 
 ## The core mechanic (PRD Story 3)
 
