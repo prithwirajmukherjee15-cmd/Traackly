@@ -7,6 +7,7 @@
   --brand: 0 115 234; /* #0073ea */
   --brand-hover: 0 96 185;
   --brand-soft: 204 229 255;
+  --brand-on-dark: 90 169 255; /* brand blue lifted for text on dark (kiosk) */
   --ink: 50 51 56; /* #323338 */
   --ink-muted: 103 104 121; /* #676879 */
   --ink-faint: 151 153 170;

@@ -19,7 +19,7 @@ Use the SVGs wherever you can. The PNGs have transparent backgrounds. The wordma
 
 | Name | Hex | Role |
 |---|---|---|
-| Traackly Blue | `#0073EA` | Symbol tile, primary actions |
+| Traackly Blue | `#0073EA` | Symbol tile, the "aa" in the wordmark, primary actions |
 | Acknowledge Amber | `#FFCB00` | The tick; "changed, needs acknowledgment" in the app |
 | Done Green | `#00C875` | Completed work |
 | Ink | `#1F2033` | Wordmark and text on light backgrounds |
@@ -28,7 +28,7 @@ Use the SVGs wherever you can. The PNGs have transparent backgrounds. The wordma
 ## Do
 
 - Keep clear space around the logo of at least half the symbol's width.
-- Write the name in lowercase in the logo: **traackly** (two a's).
+- Write the name in lowercase in the logo: **traackly**, with the double **aa** in Traackly Blue (`#5AA9FF` on dark backgrounds) so the spelling sticks.
 
 ## Don't
 
