@@ -1,14 +1,15 @@
 <div align="center">
 
-<img src="docs/media/logo.svg" width="64" height="64" alt="Traackly logo">
-
-# Traackly
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/brand/traackly-logo-on-dark.svg">
+  <img src="docs/brand/traackly-logo.svg" width="320" alt="Traackly">
+</picture>
 
 **Every request, from order desk to shop floor.**
 
 The request layer for manufacturers where an edit made after approval can't slip past the people doing the work.
 
-[▶ Watch the walkthrough (5:53)](docs/media/traackly-walkthrough.mp4) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
+[▶ Watch the walkthrough (5:54)](docs/media/traackly-walkthrough.mp4) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
 
 <a href="docs/media/traackly-walkthrough.mp4"><img src="docs/media/walkthrough-preview.gif" width="880" alt="Traackly in 30 seconds: the homepage, a live request board, a new request, the change log, the floor kiosk flagging a change, and the completed request"></a>
 
