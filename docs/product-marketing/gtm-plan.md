@@ -32,7 +32,7 @@ How Traackly would reach its first customers. Like the [PRD](PRD.md), every clai
 - Per-seat pricing punishes exactly the people Traackly is built to reach: floor staff who never log in. Charging per seat would make the floor the first thing a buyer cuts.
 - Per site: unlimited office users, plus a fee for each department kiosk. That matches how the value is created (every department that sees the latest spec).
 - **Anchor the price to the cost of one reworked order, not to software benchmarks.** If a single wrong build costs more than a year of Traackly, the purchase is easy. Measuring that cost per incident is the PRD's top open question.
-- Desk-first tools charge per seat ([competitive teardown](competitive-teardown.md)); per-site pricing is itself a point of difference.
+- Desk-first tools charge per seat. For a site with 5 office users and 40 floor workers, the tier closest to Traackly's rule costs roughly $855 a month on monday.com Pro and $1,250 on Asana Advanced, and that cost is driven by the floor ([competitive teardown](competitive-teardown.md)). Per-site pricing is itself a point of difference.
 
 ## 4. Channels
 
@@ -76,4 +76,4 @@ All channels are **ASSUMPTIONS** to be ranked by cost per qualified conversation
 | The problem is real but not frequent enough to pay for | Phase 0 measures frequency and cost before any selling |
 | The floor sees acknowledgment as extra admin | One tap, only on changed jobs; test kiosk usability in phase 1 |
 | Teams keep using email alongside Traackly | The Coordinator dashboard must save them chasing time from week one; track the share of orders raised in Traackly |
-| "We'll just set this up in monday.com" | Show the floor problem: those tools need a login per worker, and can't block work until a change is acknowledged (see the teardown) |
+| "We'll just set this up in monday.com" | Show the floor problem: every acknowledging worker needs a paid seat, and blocking work until a change is acknowledged is either impossible (Asana, Trello) or a per-board configuration project (monday.com Pro). See the [teardown](competitive-teardown.md). |
