@@ -10,7 +10,7 @@
 At a manufacturer I worked for, an order was built to the wrong spec for weeks because a change made after approval never reached the floor.<br>
 Traackly is the fix I designed and shipped.
 
-[▶ Watch the walkthrough (5:54)](WALKTHROUGH.md) · [Read the case study (PDF)](docs/case-study.pdf) · [Read the PRD](docs/product-marketing/PRD.md)
+[▶ Watch the walkthrough (5:54)](WALKTHROUGH.md) · [Read the product teardown](docs/product-teardown.md) · [Read the case study (PDF)](docs/case-study.pdf) · [Read the PRD](docs/product-marketing/PRD.md)
 
 <a href="WALKTHROUGH.md"><img src="docs/media/walkthrough-preview.gif" width="880" alt="Traackly in 30 seconds: the homepage, a live request board, a new request, the change log, the floor kiosk flagging a change, and the completed request"></a>
 
@@ -86,6 +86,7 @@ I built the working software with an AI coding assistant (Claude Code), directin
 
 | Document | What it shows |
 |---|---|
+| [Product teardown](docs/product-teardown.md) | The whole project in one place: problem, positioning, competition, GTM, brand, metrics and every screen |
 | [Product requirements (PRD)](docs/product-marketing/PRD.md) | Problem discovery, personas, metrics, user stories and scope, written before the build |
 | [Positioning & messaging](docs/product-marketing/positioning.md) | Positioning statement, message house and proof points |
 | [Competitive teardown](docs/product-marketing/competitive-teardown.md) | monday.com, Asana, Trello and Freshservice against this segment's needs, with sources |
