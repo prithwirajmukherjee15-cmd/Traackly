@@ -30,7 +30,7 @@ func TestLoginMeLogoutRefresh(t *testing.T) {
 		t.Fatalf("msg %q", ae.Error.Message)
 	}
 	anon.fail(http.MethodPost, "/api/auth/login", map[string]string{"email": "not-an-email", "password": "x"}, http.StatusUnauthorized)
-	anon.fail(http.MethodPost, "/api/auth/login", map[string]string{"email": "ghost@ncbp.in", "password": "x"}, http.StatusUnauthorized)
+	anon.fail(http.MethodPost, "/api/auth/login", map[string]string{"email": "ghost@example.com", "password": "x"}, http.StatusUnauthorized)
 	anon.fail(http.MethodGet, "/api/auth/me", nil, http.StatusUnauthorized)
 
 	c := e.login(authzEmail, authzPass)
@@ -86,15 +86,15 @@ func TestLoginLockout(t *testing.T) {
 func TestInviteActivateLoginFlow(t *testing.T) {
 	e := newEnv(t)
 	authz := e.login(authzEmail, authzPass)
-	inv := map[string]string{"name": "Ravi Kumar", "email": "Ravi@NCBP.in", "role": "floor_supervisor", "department": "qa"}
+	inv := map[string]string{"name": "Ravi Kumar", "email": "Ravi@Example.com", "role": "floor_supervisor", "department": "qa"}
 	var out userEnvelope
 	if code := authz.call(http.MethodPost, "/api/users/invite", inv, &out); code != http.StatusCreated {
 		t.Fatalf("invite %d", code)
 	}
-	if out.User.Status != "invited" || out.User.Email != "ravi@ncbp.in" || *out.User.Department != "qa" {
+	if out.User.Status != "invited" || out.User.Email != "ravi@example.com" || *out.User.Department != "qa" {
 		t.Fatalf("invited %+v", out.User)
 	}
-	if len(e.mail.to("ravi@ncbp.in")) != 1 || !strings.HasPrefix(out.DevLink, testBaseURL+"/activate/") {
+	if len(e.mail.to("ravi@example.com")) != 1 || !strings.HasPrefix(out.DevLink, testBaseURL+"/activate/") {
 		t.Fatalf("invite email/link missing: %q", out.DevLink)
 	}
 	if ae := authz.fail(http.MethodPost, "/api/users/invite", inv, http.StatusUnprocessableEntity); ae.Error.Fields["email"] == "" {
@@ -123,14 +123,14 @@ func TestInviteActivateLoginFlow(t *testing.T) {
 	}
 	anon.fail(http.MethodPost, "/api/users/activate/"+tok, map[string]string{"password": "floor1234", "confirmPassword": "floor1234"}, http.StatusNotFound)
 	authz.fail(http.MethodPost, "/api/users/"+out.User.ID+"/resend-invite", nil, http.StatusConflict)
-	e.login("ravi@ncbp.in", "floor1234")
+	e.login("ravi@example.com", "floor1234")
 }
 
 func TestInviteExpires(t *testing.T) {
 	e := newEnv(t)
 	authz := e.login(authzEmail, authzPass)
 	var out userEnvelope
-	authz.call(http.MethodPost, "/api/users/invite", map[string]string{"name": "Late User", "email": "late@ncbp.in", "role": "coordinator"}, &out)
+	authz.call(http.MethodPost, "/api/users/invite", map[string]string{"name": "Late User", "email": "late@example.com", "role": "coordinator"}, &out)
 	e.clock.Advance(domain.InviteTTL + time.Minute)
 	e.anon().fail(http.MethodPost, "/api/users/activate/"+token(out.DevLink), map[string]string{"password": "abcdefg1", "confirmPassword": "abcdefg1"}, http.StatusNotFound)
 }
@@ -140,7 +140,7 @@ func TestForgotAndResetPassword(t *testing.T) {
 	anon := e.anon()
 	anon.fail(http.MethodPost, "/api/auth/forgot-password", map[string]string{"email": "bad"}, http.StatusUnprocessableEntity)
 	var ghost struct{ DevLink string }
-	if code := anon.call(http.MethodPost, "/api/auth/forgot-password", map[string]string{"email": "ghost@ncbp.in"}, &ghost); code != http.StatusOK || ghost.DevLink != "" {
+	if code := anon.call(http.MethodPost, "/api/auth/forgot-password", map[string]string{"email": "ghost@example.com"}, &ghost); code != http.StatusOK || ghost.DevLink != "" {
 		t.Fatal("unknown email must look identical and send nothing")
 	}
 	old := e.login(authzEmail, authzPass)
@@ -195,7 +195,7 @@ func TestDeactivationIsRealTime(t *testing.T) {
 		t.Fatalf("code %q", ae.Error.Code)
 	}
 	authz.fail(http.MethodPatch, "/api/users/"+u.ID.Hex(), map[string]string{"status": "deactivated"}, http.StatusConflict)
-	e.anon().fail(http.MethodPost, "/api/auth/login", map[string]string{"email": "meera.iyer@ncbp.in", "password": "password1"}, http.StatusUnauthorized)
+	e.anon().fail(http.MethodPost, "/api/auth/login", map[string]string{"email": "meera.iyer@example.com", "password": "password1"}, http.StatusUnauthorized)
 }
 
 func TestLastAuthorizerGuard(t *testing.T) {

@@ -13,10 +13,10 @@ import (
 	"github.com/prithwirajmukherjee15-cmd/traackly/server/internal/domain"
 )
 
-// TestNCBPIncidentEndToEnd is the most important test in the codebase (Implementation Plan, Phase 4).
+// TestRailwayOrderIncidentEndToEnd is the most important test in the codebase (Implementation Plan, Phase 4).
 // It replays the PRD's railway-order incident through the real API: raise, authorize, schedule,
 // edit after authorization, flag, block, acknowledge, unblock, and verifies the exact changelog.
-func TestNCBPIncidentEndToEnd(t *testing.T) {
+func TestRailwayOrderIncidentEndToEnd(t *testing.T) {
 	e := newEnv(t)
 	coord, _ := e.user("Meera Iyer", domain.RoleCoordinator, "")
 	logi, _ := e.user("Arjun Rao", domain.RoleLogistics, "")
@@ -45,7 +45,7 @@ func TestNCBPIncidentEndToEnd(t *testing.T) {
 	if approved.State != "in_progress" {
 		t.Fatalf("approve state %s", approved.State)
 	}
-	if len(e.mail.to("arjun.rao@ncbp.in")) != 1 {
+	if len(e.mail.to("arjun.rao@example.com")) != 1 {
 		t.Fatal("logistics must be notified on approval")
 	}
 
@@ -69,7 +69,7 @@ func TestNCBPIncidentEndToEnd(t *testing.T) {
 		t.Fatalf("edit result %+v / %q", edited.Request.State, edited.NextOwners)
 	}
 	waitEvent(t, events, created.ID)
-	if len(e.mail.to("arjun.rao@ncbp.in")) != 2 {
+	if len(e.mail.to("arjun.rao@example.com")) != 2 {
 		t.Fatal("logistics must be notified of the change")
 	}
 

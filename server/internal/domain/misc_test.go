@@ -53,11 +53,11 @@ func TestValidatePassword(t *testing.T) {
 }
 
 func TestNormalizeEmail(t *testing.T) {
-	e, err := domain.NormalizeEmail("  Asha@NCBP.in ")
-	if err != nil || e != "asha@ncbp.in" {
+	e, err := domain.NormalizeEmail("  Asha@Example.com ")
+	if err != nil || e != "asha@example.com" {
 		t.Fatalf("got %q %v", e, err)
 	}
-	for _, bad := range []string{"", "asha", "@ncbp.in", "asha@ncbp", "asha@ncbp.", "a b@c.in"} {
+	for _, bad := range []string{"", "asha", "@example.com", "asha@example", "asha@example.", "a b@c.in"} {
 		if _, err := domain.NormalizeEmail(bad); !apperrors.HasCode(err, apperrors.CodeValidation) {
 			t.Errorf("%q should be invalid", bad)
 		}
@@ -67,23 +67,23 @@ func TestNormalizeEmail(t *testing.T) {
 func TestNewInvitedUser(t *testing.T) {
 	by := bson.NewObjectID()
 	u, err := domain.NewInvitedUser(domain.Invite{
-		Name: "Ravi", Email: "Ravi@ncbp.in", Role: domain.RoleFloorSupervisor, Department: domain.DeptQA,
+		Name: "Ravi", Email: "Ravi@example.com", Role: domain.RoleFloorSupervisor, Department: domain.DeptQA,
 	}, by, t0)
-	if err != nil || u.Status != domain.UserInvited || *u.Department != domain.DeptQA || u.Email != "ravi@ncbp.in" {
+	if err != nil || u.Status != domain.UserInvited || *u.Department != domain.DeptQA || u.Email != "ravi@example.com" {
 		t.Fatalf("got %+v %v", u, err)
 	}
 	bad := []domain.Invite{
 		{Name: "Ravi", Email: "bad", Role: domain.RoleCoordinator},
-		{Name: "R", Email: "r@ncbp.in", Role: domain.RoleCoordinator},
-		{Name: "Ravi", Email: "r@ncbp.in", Role: "boss"},
-		{Name: "Ravi", Email: "r@ncbp.in", Role: domain.RoleFloorSupervisor},
+		{Name: "R", Email: "r@example.com", Role: domain.RoleCoordinator},
+		{Name: "Ravi", Email: "r@example.com", Role: "boss"},
+		{Name: "Ravi", Email: "r@example.com", Role: domain.RoleFloorSupervisor},
 	}
 	for _, in := range bad {
 		if _, err := domain.NewInvitedUser(in, by, t0); !apperrors.HasCode(err, apperrors.CodeValidation) {
 			t.Errorf("%+v should be invalid, got %v", in, err)
 		}
 	}
-	c, _ := domain.NewInvitedUser(domain.Invite{Name: "Meera", Email: "m@ncbp.in", Role: domain.RoleCoordinator}, by, t0)
+	c, _ := domain.NewInvitedUser(domain.Invite{Name: "Meera", Email: "m@example.com", Role: domain.RoleCoordinator}, by, t0)
 	if c.Department != nil {
 		t.Fatal("coordinator must not have a department")
 	}

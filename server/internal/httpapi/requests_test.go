@@ -85,7 +85,7 @@ func TestAuthorizerQueueApproveWithEditsAndDecline(t *testing.T) {
 	if declined.State != "declined" || *declined.DeclineReason != "Out of capacity" {
 		t.Fatalf("declined %+v", declined)
 	}
-	if len(e.mail.to("meera.iyer@ncbp.in")) != 1 {
+	if len(e.mail.to("meera.iyer@example.com")) != 1 {
 		t.Fatal("coordinator must be emailed the decline")
 	}
 	if got := coord.request("/api/requests/" + b.ID); *got.DeclineReason != "Out of capacity" {
@@ -108,7 +108,7 @@ func TestOptimisticConcurrency(t *testing.T) {
 	coord, _ := e.user("Meera Iyer", domain.RoleCoordinator, "")
 	_, _ = e.user("Second Authz", domain.RoleAuthorizer, "")
 	s1 := e.login(authzEmail, authzPass)
-	s2 := e.login("second.authz@ncbp.in", "password1")
+	s2 := e.login("second.authz@example.com", "password1")
 	r := coord.post("/api/requests", railwayOrder()).Request
 
 	edit := railwayOrder()
@@ -185,7 +185,7 @@ func TestLogisticsQueueAndTimeline(t *testing.T) {
 	if !risk.AtRisk || len(risk.Reasons) != 2 {
 		t.Fatalf("risk %+v", risk)
 	}
-	e.login("arjun.rao@ncbp.in", "password1").fail(http.MethodPost, "/api/requests", railwayOrder(), http.StatusForbidden)
+	e.login("arjun.rao@example.com", "password1").fail(http.MethodPost, "/api/requests", railwayOrder(), http.StatusForbidden)
 }
 
 func TestNotificationFailureIsLogged(t *testing.T) {

@@ -56,7 +56,7 @@ describe('request field validation mirrors the server', () => {
   });
 
   it('requires a department only for floor supervisors', () => {
-    const base = { name: 'Ravi Kumar', email: 'ravi@ncbp.in', role: 'floor_supervisor', department: '' };
+    const base = { name: 'Ravi Kumar', email: 'ravi@example.com', role: 'floor_supervisor', department: '' };
     expect(fieldErrors(inviteSchema.safeParse(base)).department).toBe('Floor supervisors need a department');
     expect(inviteSchema.safeParse({ ...base, role: 'logistics' }).success).toBe(true);
     expect(fieldErrors(inviteSchema.safeParse({ ...base, email: 'nope' })).email).toBe(

@@ -38,7 +38,7 @@ var testHasher = &auth.Hasher{Cost: 4}
 
 const (
 	testSecret  = "test-secret-test-secret-test-secret!"
-	authzEmail  = "founder@ncbp.in"
+	authzEmail  = "founder@example.com"
 	authzPass   = "founder123"
 	testBaseURL = "http://app.test"
 )
@@ -203,7 +203,7 @@ func (e *env) login(email, password string) *client {
 // user creates an active account directly and logs it in.
 func (e *env) user(name string, role domain.Role, dept domain.Department) (*client, *domain.User) {
 	e.t.Helper()
-	email := strings.ToLower(strings.ReplaceAll(name, " ", ".")) + "@ncbp.in"
+	email := strings.ToLower(strings.ReplaceAll(name, " ", ".")) + "@example.com"
 	u, err := seed.EnsureAccount(context.Background(), e.st, testHasher, &seed.Account{
 		Name: name, Email: email, Password: "password1", Role: role, Department: dept,
 	})

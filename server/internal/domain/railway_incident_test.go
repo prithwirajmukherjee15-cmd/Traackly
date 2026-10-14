@@ -11,10 +11,10 @@ import (
 	"github.com/prithwirajmukherjee15-cmd/traackly/server/internal/domain"
 )
 
-// TestNCBPIncidentIsPrevented replays the PRD's railway-order incident at the
+// TestRailwayOrderIncidentIsPrevented replays the PRD's railway-order incident at the
 // rule level: a spec edit after the job reached Production must block the floor
 // until both Logistics and the floor have acknowledged it.
-func TestNCBPIncidentIsPrevented(t *testing.T) {
+func TestRailwayOrderIncidentIsPrevented(t *testing.T) {
 	coord, authz, logi := bson.NewObjectID(), bson.NewObjectID(), bson.NewObjectID()
 	r, err := domain.NewRequest(baseFields(), coord, t0)
 	if err != nil {
