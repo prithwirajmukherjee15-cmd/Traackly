@@ -32,11 +32,11 @@ func TestDemoSeedIsIdempotent(t *testing.T) {
 	if err := st.EnsureIndexes(ctx); err != nil {
 		t.Fatal(err)
 	}
-	authz, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Name: "Founder", Email: "f@ncbp.in", Password: "founder123", Role: domain.RoleAuthorizer})
+	authz, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Name: "Founder", Email: "f@example.com", Password: "founder123", Role: domain.RoleAuthorizer})
 	if err != nil {
 		t.Fatal(err)
 	}
-	again, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Email: "f@ncbp.in"})
+	again, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Email: "f@example.com"})
 	if err != nil || again.ID != authz.ID {
 		t.Fatal("EnsureAccount must return the existing user")
 	}
@@ -60,11 +60,11 @@ func TestDemoSeedIsIdempotent(t *testing.T) {
 	if err != nil || len(floor) != 1 {
 		t.Fatalf("floor users %d", len(floor))
 	}
-	if _, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Email: "x@ncbp.in", Password: string(make([]byte, 80))}); err == nil {
+	if _, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Email: "x@example.com", Password: string(make([]byte, 80))}); err == nil {
 		t.Fatal("over-long password must fail")
 	}
 	_ = client.Disconnect(ctx)
-	if _, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Email: "y@ncbp.in"}); err == nil {
+	if _, err := seed.EnsureAccount(ctx, st, h, &seed.Account{Email: "y@example.com"}); err == nil {
 		t.Fatal("disconnected store must fail")
 	}
 }

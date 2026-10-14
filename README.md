@@ -72,7 +72,7 @@ The UI follows monday.com's design language: colour-coded board groups, full-col
 3. Until every pending acknowledgment is cleared, *Mark in progress* and *Mark done* are refused by the server (`409 blocked`), as well as disabled in the UI.
 4. Downstream owners are notified by email, and every open screen updates over WebSocket within about a second.
 
-Every write to an existing request goes through one function, `store.MutateRequest`. It applies the domain rule, does an `updatedAt` compare-and-swap (optimistic concurrency, App Flow §9), and persists changelog and status history with `$push` only, so history is append-only at the database operation level. No HTTP handler can bypass the gate. `TestNCBPIncidentEndToEnd` replays the PRD incident through the real API, and `TestChangelogIsAppendOnly` proves that a forged rewrite of history is not stored.
+Every write to an existing request goes through one function, `store.MutateRequest`. It applies the domain rule, does an `updatedAt` compare-and-swap (optimistic concurrency, App Flow §9), and persists changelog and status history with `$push` only, so history is append-only at the database operation level. No HTTP handler can bypass the gate. `TestRailwayOrderIncidentEndToEnd` replays the PRD incident through the real API, and `TestChangelogIsAppendOnly` proves that a forged rewrite of history is not stored.
 
 ## Stack
 
@@ -108,7 +108,7 @@ Demo logins (password `traackly123`):
 | `logistics@traackly.demo` | Logistics |
 | `floor@traackly.demo` | Floor supervisor (Production) |
 
-The demo data includes the NCBP railway order already edited after it reached the Production floor, so the kiosk shows it flagged.
+The demo data includes a railway order that was edited after it reached the Production floor, so the kiosk shows it flagged.
 
 To try the **shared-station kiosk** (no personal login), sign in as the Authorizer, open **Manage team → Kiosk stations → Provision**, and open the one-time link on another browser or device.
 

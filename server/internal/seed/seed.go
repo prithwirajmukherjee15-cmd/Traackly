@@ -54,7 +54,7 @@ func EnsureAccount(ctx context.Context, st *store.Store, h *auth.Hasher, acc *Ac
 }
 
 // Demo creates one account per role plus requests in every lifecycle state,
-// including a replay of the NCBP railway order with an unacknowledged spec change.
+// including a replay of the railway-order incident with an unacknowledged spec change.
 func Demo(ctx context.Context, st *store.Store, h *auth.Hasher, authorizer *domain.User) error {
 	people := map[domain.Role]*domain.User{domain.RoleAuthorizer: authorizer}
 	accounts := []Account{

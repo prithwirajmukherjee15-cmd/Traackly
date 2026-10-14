@@ -82,7 +82,7 @@ func TestFloorSupervisorLoginKiosk(t *testing.T) {
 	job := scheduledJob(t, e, "supply")
 	sup, _ := e.user("Sunil Patil", domain.RoleFloorSupervisor, domain.DeptSupply)
 	prod, _ := e.user("Prod Sup", domain.RoleFloorSupervisor, domain.DeptProduction)
-	coord := e.login("meera.iyer@ncbp.in", "password1")
+	coord := e.login("meera.iyer@example.com", "password1")
 
 	var me kioskMe
 	if code := sup.call(http.MethodGet, "/api/kiosk/me", nil, &me); code != http.StatusOK || me.Mode != "supervisor" || me.Name != "Sunil Patil" {

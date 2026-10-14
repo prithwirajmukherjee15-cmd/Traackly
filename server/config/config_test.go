@@ -36,10 +36,10 @@ func TestLoadSeed(t *testing.T) {
 	if _, err := config.LoadSeed(); !errors.Is(err, config.ErrInvalidConfig) {
 		t.Fatalf("missing email should fail, got %v", err)
 	}
-	t.Setenv("SEED_AUTHORIZER_EMAIL", " Founder@NCBP.in ")
+	t.Setenv("SEED_AUTHORIZER_EMAIL", " Founder@Example.com ")
 	t.Setenv("SEED_AUTHORIZER_PASSWORD", "founder123")
 	s, err := config.LoadSeed()
-	if err != nil || s.AuthorizerEmail != "founder@ncbp.in" || s.AuthorizerName == "" {
+	if err != nil || s.AuthorizerEmail != "founder@example.com" || s.AuthorizerName == "" {
 		t.Fatalf("seed %+v %v", s, err)
 	}
 }

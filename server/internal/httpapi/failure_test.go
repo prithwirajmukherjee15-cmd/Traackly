@@ -113,13 +113,13 @@ func TestDependencyFailures(t *testing.T) {
 			t := e.t
 			c := e.login(authzEmail, authzPass)
 			e.failpoint(cUsers, 0, "insert")
-			expect500(t, c, http.MethodPost, "/api/users/invite", map[string]string{"name": "New Person", "email": "n@ncbp.in", "role": "coordinator"})
+			expect500(t, c, http.MethodPost, "/api/users/invite", map[string]string{"name": "New Person", "email": "n@example.com", "role": "coordinator"})
 		}},
 		{"invite token update", func(e *env) {
 			t := e.t
 			c := e.login(authzEmail, authzPass)
 			e.failpoint(cUsers, 0, "update")
-			expect500(t, c, http.MethodPost, "/api/users/invite", map[string]string{"name": "New Person", "email": "n@ncbp.in", "role": "coordinator"})
+			expect500(t, c, http.MethodPost, "/api/users/invite", map[string]string{"name": "New Person", "email": "n@example.com", "role": "coordinator"})
 		}},
 		{"resend lookup", func(e *env) {
 			t := e.t
@@ -135,7 +135,7 @@ func TestDependencyFailures(t *testing.T) {
 		{"activate update", func(e *env) {
 			t := e.t
 			var out userEnvelope
-			e.login(authzEmail, authzPass).call(http.MethodPost, "/api/users/invite", map[string]string{"name": "New Person", "email": "n@ncbp.in", "role": "coordinator"}, &out)
+			e.login(authzEmail, authzPass).call(http.MethodPost, "/api/users/invite", map[string]string{"name": "New Person", "email": "n@example.com", "role": "coordinator"}, &out)
 			e.failpoint(cUsers, 0, "update")
 			expect500(t, e.anon(), http.MethodPost, "/api/users/activate/"+token(out.DevLink), pwd)
 		}},
@@ -272,7 +272,7 @@ func TestInputEdgeCases(t *testing.T) {
 	// bcrypt rejects passwords over 72 bytes after policy validation passes.
 	long := strings.Repeat("a", 80) + "1"
 	var out userEnvelope
-	authz.call(http.MethodPost, "/api/users/invite", map[string]string{"name": "Long Pass", "email": "lp@ncbp.in", "role": "logistics"}, &out)
+	authz.call(http.MethodPost, "/api/users/invite", map[string]string{"name": "Long Pass", "email": "lp@example.com", "role": "logistics"}, &out)
 	expect500(t, anon, http.MethodPost, "/api/users/activate/"+token(out.DevLink), map[string]string{"password": long, "confirmPassword": long})
 	expect500(t, anon, http.MethodPost, "/api/auth/reset-password/x", map[string]string{"password": long, "confirmPassword": long})
 
