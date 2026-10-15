@@ -14,7 +14,7 @@ Traackly is the fix I designed and shipped.
 
 <sub>Pick a role and click around: sample data, resets every few hours. If it's been idle, the first load takes about a minute.</sub>
 
-[▶ Watch the walkthrough (5:54)](WALKTHROUGH.md) · [Read the product teardown](docs/product-teardown.md) · [Read the case study (PDF)](docs/case-study.pdf) · [Read the PRD](docs/product-marketing/PRD.md)
+[▶ Watch the walkthrough (5:54)](WALKTHROUGH.md) · [Read the product teardown](docs/product-teardown.md) · [See the customer research & roadmap](docs/research/customer-research-and-roadmap.pdf) · [Read the case study (PDF)](docs/case-study.pdf) · [Read the PRD](docs/product-marketing/PRD.md)
 
 <a href="WALKTHROUGH.md"><img src="docs/media/walkthrough-preview.gif" width="880" alt="Traackly in 30 seconds: the homepage, a live request board, a new request, the change log, the floor kiosk flagging a change, and the completed request"></a>
 
@@ -96,17 +96,63 @@ I built the working software with an AI coding assistant (Claude Code), directin
 | [Competitive teardown](docs/product-marketing/competitive-teardown.md) | monday.com, Asana, Trello and Freshservice against this segment's needs, with sources |
 | [Go-to-market plan](docs/product-marketing/gtm-plan.md) | Ideal customer, channels, pricing hypothesis, launch steps and metrics |
 | [Walkthrough](WALKTHROUGH.md) | The 5:54 product video with chapters, plus short cuts for social |
+| [Customer research & roadmap (PDF)](docs/research/customer-research-and-roadmap.pdf) | 70 simulated manufacturers (53 Indian SMBs across every state, 17 global): what resonated, what they need next, pricing and the roadmap |
 | [Case study (PDF)](docs/case-study.pdf) | The one-page version of this story |
 | [Brand kit](docs/brand) | Logo, colours and usage rules |
 
-## What I'd do next
+## Customer research: where Traackly goes next
 
-1. **Validate before building more.** Run the interviews the PRD calls for, to measure how often post-approval changes go missing and what each one costs.
-2. **Pilot with one manufacturer, on one product line.** Compare the share of acknowledged changes against today's email-based baseline.
-3. **Test the kiosk with real floor supervisors** before adding any kiosk features.
-4. **Write up the pilot as a case study.** Real numbers from a real shop floor are the next marketing asset.
+Before building more, I tested Traackly with 70 simulated manufacturers, India first, to see what resonates and what to build next.
 
-Multi-language support, a client-facing status portal and analytics stay deferred until the core rule is proven, exactly as the PRD's roadmap says.
+**[Read the full customer research and roadmap (PDF, 25 pages)](docs/research/customer-research-and-roadmap.pdf)**
+
+### How the test was conducted
+
+- **Who.** 70 AI-simulated customer personas:
+  - **53 Indian SMBs** covering all 28 states and 5 union territories, from Ludhiana cycle parts and Morbi ceramics to Coimbatore pumps, Howrah foundries and Guwahati fabrication. They were owners, second-generation MDs, production managers and floor supervisors, at companies of 9 to 450 people.
+  - **17 manufacturers in 15 other countries**: the US, UK, Germany, Poland, Italy, Mexico, Brazil, Bangladesh, Vietnam, Thailand, China, Japan, the UAE, Kenya and South Africa.
+- **What they saw.** Only what a real prospect would see: a one-page product sheet, 14 product screenshots and the live demo link. They did **not** see the PRD, the strategy documents or the story behind the product. They knew it is English-only today, has no Tally or WhatsApp link yet, and has no customers or price yet.
+- **How.** Eight regional swarms (North, West, South, Central, East and North-East India, plus two global groups). Each persona reacted on its own, in its own voice, grounded in its local industry: how orders and changes really travel, the devices on the floor, language and payment habits. A final pass combined the results.
+- **What it is, and isn't.** These are model-simulated personas, not real customers. Read the results as a structured stress test that shapes the roadmap and picks the first pilots. They are not validation. Every price and frequency is a persona estimate, and the report lists how to check each key finding with real plants.
+
+### What resonated
+
+- **The core rule.** Across all 70 personas, nobody disputed it: when an approved order changes, the floor must acknowledge it before the job is marked done.
+- **The yellow CHANGED flag works without reading English.** *"Pila dabba dikha toh samajh gaya kuch badla hai"* (I saw the yellow box, so I knew something had changed), from a floor supervisor in Meerut.
+- **The locked *Mark done* and the permanent change log.** Owners valued them as proof in audits, billing disputes and arguments with contractors. *"If wiring team must acknowledge before 'done', the blame game stops,"* said a panel builder in Puducherry.
+- **30 of 53 Indian SMBs would take a free pilot today.** Another 17 said maybe.
+- **Clear best-fit customers.** Made-to-order manufacturers with 35–300 people and costly misses:
+
+| Cluster | Fit (of 10) | Where |
+|---|---|---|
+| LT control-panel builders | 7.0 | Chandigarh, Puducherry |
+| Flexible and pharma packaging | 6.5 | Silvassa, Baddi |
+| Export leather, furniture and sports goods | 6.2 | Kolkata, Kanpur, Jodhpur, Jalandhar |
+| Pumps and precision parts | 6.0 | Coimbatore, Rajkot |
+| Tier-2 auto (informal schedule changes) | 5.4 | Bhiwadi, Manesar, Hosur, Adityapur |
+
+### The roadmap customers are asking for
+
+In Indian factories, changes rarely arrive as typed text. They come as a drawing, a photo or a WhatsApp message, and the floor reads Hindi or a regional language. The roadmap meets them there:
+
+| When | What | Asked for by |
+|---|---|---|
+| **Now** (1–2 weeks) | Photo, PDF and drawing attachments, with versions shown in the change diff | ~40 of 53 Indian SMBs, 14 of 17 global |
+| | Hindi floor screen, with icons and only the changed value highlighted ("40 → 42") | ~40 of 53 |
+| | Quantity and due date as their own flagged fields; pick-a-name or badge entry instead of typing | ~20 and ~8 |
+| **Next** (1–2 months) | WhatsApp alerts, and forwarding a WhatsApp message or email to create a change | ~24 |
+| | Excel/Tally import, so nobody types an order twice | ~17 |
+| | Phone-first floor view that works offline, plus a printed job slip with a barcode for harsh floors | ~14 |
+| | Tamil, Marathi, Bengali and Gujarati; custom stages including outside job-workers | ~10+ |
+| **Later** | ERP connectors, a compliance edition (individual logins, e-signatures), and global languages | Larger and regulated plants |
+
+**Pricing signal.** Personas estimated about ₹2,500–5,000 a month for a 50–200 person plant. They want a flat price per plant, paid annually with a GST invoice like a Tally renewal, after a free pilot set up on site.
+
+**First pilots.** LT panel builders, flexible packaging in Silvassa, Tier-2 auto in Bhiwadi, export furniture or leather, and drawing-based fabrication in Guwahati or Vizag.
+
+**After India.** The same needs came up abroad: attachments, local language and chat apps. Bangladesh, Kenya, the UAE, UK/US job shops and Poland are the strongest next markets.
+
+**Next step: validate with real plants.** Run a 2-week "change diary" at five factories to see how changes really arrive, then a 4-week pilot with attachments and Hindi switched on. Real numbers from a real shop floor are the next case study.
 
 ---
 
