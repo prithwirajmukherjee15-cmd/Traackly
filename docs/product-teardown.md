@@ -9,7 +9,7 @@
 
 | Role | Stage | Built with | Timeline | Status |
 |---|---|---|---|---|
-| Product marketer and product owner | Working MVP, pre-pilot | Go, React, MongoDB; AI-assisted build (Claude Code) | PRD August 2026 · shipped October 2026 | 🟢 Live demo build · 🟡 No pilot yet · 🔴 Not priced |
+| Product marketer and product owner | Working MVP, pre-pilot | Go, React, MongoDB; AI-assisted build (Claude Code) | PRD August 2026 · shipped October 2026 | 🟢 [Live demo](https://traackly-demo.onrender.com) · 🟡 No pilot yet · 🔴 Not priced |
 
 <details>
 <summary><b>Contents</b>: 8 parts, 39 sections</summary>
@@ -40,6 +40,7 @@
 > - **2 minutes:** the [Executive brief](#executive-brief) and [9. The one rule](#9-the-one-rule).
 > - **10 minutes:** add Part I, [14. Capability comparison](#14-capability-comparison) and [32. Screen by screen](#32-screen-by-screen).
 > - **Full read:** top to bottom, about 30 minutes. The [5:54 walkthrough video](../WALKTHROUGH.md) covers the product in motion.
+> - **Hands-on:** [try the live demo](https://traackly-demo.onrender.com). No sign-up: pick a role, then follow the "try this" path to see a change get flagged on the floor.
 
 ---
 

@@ -95,7 +95,7 @@ cd client && npm run lint && npm run typecheck && npm test && npm run build
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/prithwirajmukherjee15-cmd/Traackly)
 
-`render.yaml` deploys **`traackly-demo`** on Render's free plan from `Dockerfile.demo`. It needs no database account and no settings:
+Live at **https://traackly-demo.onrender.com**. `render.yaml` deploys **`traackly-demo`** on Render's free plan from `Dockerfile.demo`. It needs no database account and no settings:
 
 - **A private MongoDB inside the container.** `deploy/demo-start.sh` starts `mongod` with a small cache, then the server. Set `MONGODB_URI` to use an external database instead.
 - **`DEMO_MODE=true`** seeds the sample accounts and requests on every start, including the railway order with an unacknowledged change. It replaces the login form with one-click role buttons (`POST /api/demo/login`), shows a "Switch role" control in the app, keeps the demo accounts from being deactivated, and resets the data every `DEMO_RESET_INTERVAL` (default `6h`). Outside demo mode, `/api/demo` doesn't exist.
