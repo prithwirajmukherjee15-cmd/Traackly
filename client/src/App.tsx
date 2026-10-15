@@ -1,6 +1,7 @@
 import { lazy, Suspense, type ReactNode } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { DemoDock } from './components/demo/DemoDock';
 import { AppShell } from './components/layout/AppShell';
 import { Spinner } from './components/ui/Feedback';
 import { AuthProvider, useAuth } from './lib/auth';
@@ -110,6 +111,7 @@ export default function App() {
         <ToastProvider>
           <AuthProvider>
             <AppRoutes />
+            <DemoDock />
           </AuthProvider>
         </ToastProvider>
       </QueryClientProvider>

@@ -90,7 +90,7 @@ func (s *Store) EnsureIndexes(ctx context.Context) error {
 		},
 		CollSessions: {
 			idx(bson.D{{Key: fTokenHash, Value: 1}}, true), ttl,
-			idx(bson.D{{Key: "userId", Value: 1}, {Key: fRevoked, Value: 1}}, false),
+			idx(bson.D{{Key: fUserID, Value: 1}, {Key: fRevoked, Value: 1}}, false),
 		},
 		CollStationTokens: {
 			idx(bson.D{{Key: fDepartment, Value: 1}}, true),

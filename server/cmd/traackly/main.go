@@ -65,8 +65,15 @@ func run() error {
 	svc := service.New(&service.Deps{
 		Store: st, Hub: realtime.NewHub(), Mailer: newMailer(cfg, logger),
 		Issuer: auth.NewIssuer(cfg.JWTSecret, cfg.SessionTTL, time.Now), Hasher: auth.NewHasher(), Limiter: auth.NewLimiter(time.Now),
-		Logger: logger, BaseURL: cfg.AppBaseURL, ExposeDevLinks: cfg.ExposeDevLinks, Async: true,
+		Logger: logger, BaseURL: cfg.AppBaseURL, ExposeDevLinks: cfg.ExposeDevLinks, Demo: cfg.DemoMode, Async: true,
 	})
+	if cfg.DemoMode {
+		if err := svc.ResetDemo(startCtx); err != nil {
+			return fmt.Errorf("seed demo: %w", err)
+		}
+		logger.Info("demo mode on", "reset_every", cfg.DemoResetInterval.String())
+		go svc.RunDemoResets(ctx, cfg.DemoResetInterval)
+	}
 	handler := httpapi.NewRouter(svc, httpapi.Options{CookieSecure: cfg.CookieSecure, StaticDir: cfg.StaticDir, Logger: logger})
 	return serve(ctx, &http.Server{Addr: ":" + cfg.Port, Handler: handler, ReadHeaderTimeout: readHeaderTimeout}, logger, svc)
 }

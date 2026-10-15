@@ -1,0 +1,29 @@
+# The public demo: the same app as ./Dockerfile, plus a private MongoDB inside the
+# container, so the demo deploys with one click and needs no database account.
+# The data lives only as long as the container; DEMO_MODE re-seeds it on every start.
+
+FROM node:22-alpine AS client
+WORKDIR /app/client
+COPY client/package.json client/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY client/ ./
+RUN npm run build
+
+FROM golang:1.26-alpine AS server
+WORKDIR /app/server
+COPY server/go.mod server/go.sum ./
+RUN go mod download
+COPY server/ ./
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /out/traackly ./cmd/traackly
+
+FROM mongo:7.0
+COPY --from=server /out/traackly /app/traackly
+COPY --from=client /app/client/dist /app/public
+COPY --chmod=755 deploy/demo-start.sh /app/start.sh
+ENV STATIC_DIR=/app/public \
+    PORT=8080 \
+    DEMO_MODE=true \
+    MONGODB_DB=traackly_demo
+EXPOSE 8080
+USER mongodb
+ENTRYPOINT ["/app/start.sh"]

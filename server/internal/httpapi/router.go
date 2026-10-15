@@ -59,6 +59,7 @@ func (a *API) publicRoutes(r chi.Router) {
 	r.Post("/kiosk/session", a.stationLogin)
 	r.Delete("/kiosk/session", a.stationLogout)
 	r.Get("/ws", a.websocket)
+	a.demoRoutes(r)
 }
 
 func (a *API) staffRoutes(r chi.Router) {

@@ -76,6 +76,10 @@ export const api = {
   activate: (token: string, password: string, confirmPassword: string) =>
     post<{ email: string }>(`/users/activate/${encodeURIComponent(token)}`, { password, confirmPassword }),
 
+  // Public demo (only answers on the demo deployment; a 404 everywhere else)
+  demoInfo: () => get<{ enabled: boolean }>('/demo'),
+  demoLogin: (role: string) => post<{ user: User }>('/demo/login', { role }),
+
   // Requests
   listRequests: (params: { view?: string; state?: string } = {}) => {
     const q = new URLSearchParams(Object.entries(params).filter(([, v]) => v) as [string, string][]);

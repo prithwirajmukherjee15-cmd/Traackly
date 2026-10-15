@@ -1,53 +1,26 @@
-# Render Blueprint (TRD section 8): staging auto-deploys from `develop`;
-# production deploys from `main` only when promoted manually.
-# MongoDB lives in Atlas; set MONGODB_URI per environment in the Render dashboard.
+# Render Blueprint for the public demo (the "Deploy to Render" button uses this file).
+#
+# One free web service. Dockerfile.demo bundles a private MongoDB, so there is no
+# database to set up; DEMO_MODE seeds sample data on every start, offers one-click
+# role logins, and resets the data every 6 hours. Deploys again on every push to main.
+#
+# For a real staging + production setup with MongoDB Atlas, use
+# deploy/render.staging-production.yaml instead.
 services:
   - type: web
-    name: traackly-staging
+    name: traackly-demo
     runtime: docker
     plan: free
-    branch: develop
-    autoDeploy: true
-    healthCheckPath: /api/health
-    envVars:
-      - key: MONGODB_URI
-        sync: false
-      - key: MONGODB_DB
-        value: traackly_staging
-      - key: JWT_SECRET
-        generateValue: true
-      - key: APP_BASE_URL
-        sync: false
-      - key: COOKIE_SECURE
-        value: "true"
-      - key: EXPOSE_DEV_LINKS
-        value: "true"
-      - key: RESEND_API_KEY
-        sync: false
-      - key: EMAIL_FROM
-        sync: false
-
-  - type: web
-    name: traackly
-    runtime: docker
-    plan: starter
     branch: main
-    autoDeploy: false
+    autoDeploy: true
+    dockerfilePath: ./Dockerfile.demo
     healthCheckPath: /api/health
     envVars:
-      - key: MONGODB_URI
-        sync: false
-      - key: MONGODB_DB
-        value: traackly
       - key: JWT_SECRET
         generateValue: true
-      - key: APP_BASE_URL
-        sync: false
+      - key: DEMO_MODE
+        value: "true"
       - key: COOKIE_SECURE
         value: "true"
       - key: EXPOSE_DEV_LINKS
-        value: "false"
-      - key: RESEND_API_KEY
-        sync: false
-      - key: EMAIL_FROM
-        sync: false
+        value: "true"

@@ -2,12 +2,14 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { api, ApiError, UNAUTHORIZED_EVENT } from './api';
-import type { User } from './types';
+import type { Role, User } from './types';
 
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<User>;
+  /** Demo deployment only: sign in as the sample account for a role, no password. */
+  demoLogin: (role: Role) => Promise<User>;
   logout: () => Promise<void>;
 }
 
@@ -57,6 +59,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return r.user;
   }, []);
 
+  const demoLogin = useCallback(
+    async (role: Role) => {
+      const r = await api.demoLogin(role);
+      queryClient.clear();
+      setUser(r.user);
+      return r.user;
+    },
+    [queryClient],
+  );
+
   const logout = useCallback(async () => {
     await api.logout().catch(() => undefined);
     setUser(null);
@@ -64,7 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     navigate('/login', { replace: true, state: { notice: "You've been logged out." } });
   }, [navigate, queryClient]);
 
-  const value = useMemo(() => ({ user, loading, login, logout }), [user, loading, login, logout]);
+  const value = useMemo(
+    () => ({ user, loading, login, demoLogin, logout }),
+    [user, loading, login, demoLogin, logout],
+  );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

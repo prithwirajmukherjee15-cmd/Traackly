@@ -3,6 +3,7 @@ package config_test
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/prithwirajmukherjee15-cmd/traackly/server/config"
 )
@@ -41,5 +42,30 @@ func TestLoadSeed(t *testing.T) {
 	s, err := config.LoadSeed()
 	if err != nil || s.AuthorizerEmail != "founder@example.com" || s.AuthorizerName == "" {
 		t.Fatalf("seed %+v %v", s, err)
+	}
+}
+
+func TestLoadDemoSettings(t *testing.T) {
+	t.Setenv("JWT_SECRET", "0123456789abcdef0123456789abcdef")
+	t.Setenv("APP_BASE_URL", "")
+	t.Setenv("RENDER_EXTERNAL_URL", "https://traackly-demo.onrender.com/")
+	t.Setenv("DEMO_MODE", "true")
+	t.Setenv("DEMO_RESET_INTERVAL", "")
+	c, err := config.Load()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !c.DemoMode || c.DemoResetInterval != 6*time.Hour || c.AppBaseURL != "https://traackly-demo.onrender.com" {
+		t.Fatalf("unexpected demo config %+v", c)
+	}
+	t.Setenv("DEMO_RESET_INTERVAL", "90m")
+	if c, err := config.Load(); err != nil || c.DemoResetInterval != 90*time.Minute {
+		t.Fatalf("custom interval: %+v %v", c, err)
+	}
+	for _, bad := range []string{"soon", "-1h"} {
+		t.Setenv("DEMO_RESET_INTERVAL", bad)
+		if _, err := config.Load(); !errors.Is(err, config.ErrInvalidConfig) {
+			t.Fatalf("DEMO_RESET_INTERVAL=%q should fail, got %v", bad, err)
+		}
 	}
 }

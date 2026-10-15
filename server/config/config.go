@@ -14,6 +14,7 @@ import (
 const (
 	minSecretLen      = 32
 	defaultSessionTTL = 12 * time.Hour
+	defaultDemoReset  = 6 * time.Hour
 	minPasswordLen    = 8
 )
 
@@ -40,6 +41,10 @@ type Config struct {
 	ExposeDevLinks bool
 	LogLevel       string
 	SessionTTL     time.Duration
+	// DemoMode runs the public demo: one-click role logins and sample data that resets itself.
+	DemoMode bool
+	// DemoResetInterval is how often demo mode restores the sample data.
+	DemoResetInterval time.Duration
 }
 
 // Seed holds the bootstrap-authorizer settings used by the seed command.
@@ -56,7 +61,7 @@ func Load() (*Config, error) {
 		MongoURI:       getEnvDefault("MONGODB_URI", "mongodb://127.0.0.1:27017"),
 		MongoDB:        getEnvDefault("MONGODB_DB", "traackly"),
 		JWTSecret:      os.Getenv("JWT_SECRET"),
-		AppBaseURL:     strings.TrimRight(getEnvDefault("APP_BASE_URL", "http://localhost:5173"), "/"),
+		AppBaseURL:     strings.TrimRight(getEnvDefault("APP_BASE_URL", getEnvDefault("RENDER_EXTERNAL_URL", "http://localhost:5173")), "/"),
 		CookieSecure:   getEnvBool("COOKIE_SECURE", true),
 		StaticDir:      os.Getenv("STATIC_DIR"),
 		ResendAPIKey:   os.Getenv("RESEND_API_KEY"),
@@ -64,7 +69,13 @@ func Load() (*Config, error) {
 		ExposeDevLinks: getEnvBool("EXPOSE_DEV_LINKS", false),
 		LogLevel:       getEnvDefault("LOG_LEVEL", "INFO"),
 		SessionTTL:     defaultSessionTTL,
+		DemoMode:       getEnvBool("DEMO_MODE", false),
 	}
+	reset, err := time.ParseDuration(getEnvDefault("DEMO_RESET_INTERVAL", defaultDemoReset.String()))
+	if err != nil || reset <= 0 {
+		return nil, fmt.Errorf("%w: DEMO_RESET_INTERVAL must be a positive duration like 6h", ErrInvalidConfig)
+	}
+	c.DemoResetInterval = reset
 	if err := c.validate(); err != nil {
 		return nil, err
 	}

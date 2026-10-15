@@ -30,6 +30,8 @@ type Deps struct {
 	Logger         *slog.Logger
 	BaseURL        string
 	ExposeDevLinks bool
+	// Demo turns on the public demo: password-free role logins and periodic data resets.
+	Demo bool
 	// Async sends notifications in the background. Tests run them inline.
 	Async bool
 }

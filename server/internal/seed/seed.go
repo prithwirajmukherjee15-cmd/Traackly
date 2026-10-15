@@ -57,13 +57,8 @@ func EnsureAccount(ctx context.Context, st *store.Store, h *auth.Hasher, acc *Ac
 // including a replay of the railway-order incident with an unacknowledged spec change.
 func Demo(ctx context.Context, st *store.Store, h *auth.Hasher, authorizer *domain.User) error {
 	people := map[domain.Role]*domain.User{domain.RoleAuthorizer: authorizer}
-	accounts := []Account{
-		{Name: "Meera Iyer", Email: "coordinator@traackly.demo", Role: domain.RoleCoordinator},
-		{Name: "Arjun Rao", Email: "logistics@traackly.demo", Role: domain.RoleLogistics},
-		{Name: "Sunil Patil", Email: "floor@traackly.demo", Role: domain.RoleFloorSupervisor, Department: domain.DeptProduction},
-	}
+	accounts := staffDemoAccounts()
 	for i := range accounts {
-		accounts[i].Password = DemoPassword
 		u, err := EnsureAccount(ctx, st, h, &accounts[i])
 		if err != nil {
 			return err
