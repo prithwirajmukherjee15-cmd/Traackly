@@ -9,6 +9,7 @@ const (
 	fDepartment     = "department"
 	fEmail          = "email"
 	fRole           = "role"
+	fUserID         = "userId"
 	fResetExpiresAt = "resetExpiresAt"
 	fInviteExpires  = "inviteExpiresAt"
 	fResetTokenHash = "resetTokenHash"

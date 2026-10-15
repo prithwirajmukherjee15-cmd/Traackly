@@ -3,8 +3,10 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Banner } from '../../components/ui/Feedback';
 import { TextInput } from '../../components/ui/Field';
+import { DemoRolePicker } from '../../components/demo/DemoRolePicker';
 import { ApiError } from '../../lib/api';
 import { useAuth } from '../../lib/auth';
+import { DEMO_STORY, useDemoMode } from '../../lib/demo';
 import { ROLE_HOME } from '../../lib/states';
 import { AuthLayout } from './AuthLayout';
 
@@ -25,6 +27,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const demo = useDemoMode();
 
   if (user) return <Navigate to={state.from ?? ROLE_HOME[user.role]} replace />;
 
@@ -40,6 +43,21 @@ export function LoginPage() {
       setBusy(false);
     }
   };
+
+  if (demo) {
+    return (
+      <AuthLayout
+        title="Explore the live demo"
+        subtitle="No sign-up. Pick a role to see Traackly from that person's side, with sample orders."
+      >
+        {state.notice && <Banner tone={state.tone ?? 'success'}>{state.notice}</Banner>}
+        <div className={state.notice ? 'mt-4' : ''}>
+          <DemoRolePicker />
+        </div>
+        <p className="mt-5 text-[13px] leading-snug text-ink-muted">{DEMO_STORY}</p>
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout title="Log in to Traackly" subtitle="Track every request from order desk to shop floor.">

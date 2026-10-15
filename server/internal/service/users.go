@@ -11,6 +11,7 @@ import (
 	"github.com/prithwirajmukherjee15-cmd/traackly/server/internal/domain"
 	"github.com/prithwirajmukherjee15-cmd/traackly/server/internal/notify"
 	"github.com/prithwirajmukherjee15-cmd/traackly/server/internal/realtime"
+	"github.com/prithwirajmukherjee15-cmd/traackly/server/internal/seed"
 	"github.com/prithwirajmukherjee15-cmd/traackly/server/internal/store"
 )
 
@@ -157,17 +158,8 @@ func (s *Service) Deactivate(ctx context.Context, id bson.ObjectID) error {
 	if err != nil {
 		return err
 	}
-	if u.Status != domain.UserActive {
-		return apperrors.NewConflict("Only active users can be deactivated")
-	}
-	if u.Role == domain.RoleAuthorizer {
-		n, err := s.d.Store.CountActive(ctx, domain.RoleAuthorizer)
-		if err != nil {
-			return err
-		}
-		if n <= 1 {
-			return apperrors.NewConflict("Couldn't deactivate \u2014 this is the only active Authorizer")
-		}
+	if err := s.checkDeactivatable(ctx, u); err != nil {
+		return err
 	}
 	if err := s.d.Store.SetUserStatus(ctx, id, domain.UserDeactivated); err != nil {
 		return err
@@ -179,6 +171,27 @@ func (s *Service) Deactivate(ctx context.Context, id bson.ObjectID) error {
 		s.d.Logger.ErrorContext(ctx, "publish revoke failed", "error", err)
 	}
 	s.publishUsers(ctx)
+	return nil
+}
+
+// checkDeactivatable keeps at least one active Authorizer, and keeps the demo's own accounts usable.
+func (s *Service) checkDeactivatable(ctx context.Context, u *domain.User) error {
+	if u.Status != domain.UserActive {
+		return apperrors.NewConflict("Only active users can be deactivated")
+	}
+	if s.d.Demo && seed.IsDemoAccount(u.Email) {
+		return apperrors.NewForbidden(msgDemoAccountLocked)
+	}
+	if u.Role != domain.RoleAuthorizer {
+		return nil
+	}
+	n, err := s.d.Store.CountActive(ctx, domain.RoleAuthorizer)
+	if err != nil {
+		return err
+	}
+	if n <= 1 {
+		return apperrors.NewConflict("Couldn't deactivate \u2014 this is the only active Authorizer")
+	}
 	return nil
 }
 

@@ -133,6 +133,12 @@ func (e *env) clearFailpoint() {
 
 func newEnv(t *testing.T) *env {
 	t.Helper()
+	return newEnvWith(t, false)
+}
+
+// newEnvWith builds a test server; demo turns on the public-demo mode.
+func newEnvWith(t *testing.T, demo bool) *env {
+	t.Helper()
 	uri := os.Getenv("TRAACKLY_TEST_MONGODB_URI")
 	if uri == "" {
 		t.Skip("TRAACKLY_TEST_MONGODB_URI not set")
@@ -163,7 +169,7 @@ func newEnv(t *testing.T) *env {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	e.svc = service.New(&service.Deps{
 		Store: st, Hub: e.hub, Mailer: e.mail, Issuer: auth.NewIssuer(testSecret, 12*time.Hour, clock.Now), Hasher: testHasher,
-		Limiter: auth.NewLimiter(clock.Now), Logger: logger, BaseURL: testBaseURL, ExposeDevLinks: true,
+		Limiter: auth.NewLimiter(clock.Now), Logger: logger, BaseURL: testBaseURL, ExposeDevLinks: true, Demo: demo,
 	})
 	static := t.TempDir()
 	_ = os.MkdirAll(filepath.Join(static, "assets"), 0o755)

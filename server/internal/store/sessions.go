@@ -39,7 +39,7 @@ func (s *Store) RevokeSession(ctx context.Context, hash, reason string) error {
 
 // RevokeUserSessions revokes every active session for a user in one update.
 func (s *Store) RevokeUserSessions(ctx context.Context, userID bson.ObjectID, reason string) error {
-	_, err := s.coll(CollSessions).UpdateMany(ctx, bson.M{"userId": userID, fRevoked: false},
+	_, err := s.coll(CollSessions).UpdateMany(ctx, bson.M{fUserID: userID, fRevoked: false},
 		bson.M{opSet: bson.M{fRevoked: true, "revokedReason": reason}})
 	if err != nil {
 		return fmt.Errorf("revoke user sessions: %w", err)
