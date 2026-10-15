@@ -10,6 +10,10 @@
 At a manufacturer I worked for, an order was built to the wrong spec for weeks because a change made after approval never reached the floor.<br>
 Traackly is the fix I designed and shipped.
 
+<a href="https://traackly-demo.onrender.com"><img src="https://img.shields.io/badge/Try_the_live_demo-no_sign--up-0073EA?style=for-the-badge" alt="Try the live demo, no sign-up" height="36"></a>
+
+<sub>Pick a role and click around: sample data, resets every few hours. If it's been idle, the first load takes about a minute.</sub>
+
 [▶ Watch the walkthrough (5:54)](WALKTHROUGH.md) · [Read the product teardown](docs/product-teardown.md) · [Read the case study (PDF)](docs/case-study.pdf) · [Read the PRD](docs/product-marketing/PRD.md)
 
 <a href="WALKTHROUGH.md"><img src="docs/media/walkthrough-preview.gif" width="880" alt="Traackly in 30 seconds: the homepage, a live request board, a new request, the change log, the floor kiosk flagging a change, and the completed request"></a>
